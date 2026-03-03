@@ -25,7 +25,6 @@ Zero-shot accuracy improves by +1.1 points at 50% sparsity and +2.6 points at 70
 ```bash
 git clone https://github.com/YOUR-USERNAME/circuit-guided-pruning.git
 cd circuit-guided-pruning
-pip install -r requirements.txt
 ```
 
 ### Dependencies
