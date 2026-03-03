@@ -36,36 +36,6 @@ git clone https://github.com/YOUR-USERNAME/circuit-guided-pruning.git
 
 ## Usage
 
-### Step 1: Compute circuit scores
-
-```bash
-python compute_scores.py \
-    --model meta-llama/Llama-3.2-3B \
-    --method relp \
-    --n_samples 500 \
-    --output scores/llama3.2_3b_relp.pt
-```
-
-### Step 2: Prune with circuit-guided allocation
-
-```bash
-python prune.py \
-    --model meta-llama/Llama-3.2-3B \
-    --scores scores/llama3.2_3b_relp.pt \
-    --sparsity 0.5 \
-    --temperature 5.0 \
-    --output models/llama3.2_3b_pruned_50
-```
-
-### Step 3: Evaluate
-
-```bash
-python evaluate.py \
-    --model models/llama3.2_3b_pruned_50 \
-    --eval_ppl \
-    --eval_zeroshot
-```
-
 ## Project Structure
 
 ```
