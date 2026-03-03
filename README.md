@@ -50,20 +50,10 @@ git clone https://github.com/YOUR-USERNAME/circuit-guided-pruning.git
 └── scripts/             # Ablation & analysis scripts
 ```
 
-## Citation
 
-```bibtex
-@article{kialy2025circuit,
-  title={Circuit-Based Pruning: From Interpretability Scores to Sparsity Budgets in Large Language Models},
-  author={Kialy, Uri Z.},
-  year={2025}
-}
-```
 
 ## Acknowledgments
 
 This work builds on [Wanda](https://github.com/locuslab/wanda), [RelP](https://github.com/Farnazgh/RelP), and [TransformerLens](https://github.com/TransformerLensOrg/TransformerLens).
 
-## License
 
-MIT
