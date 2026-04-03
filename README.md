@@ -1,4 +1,4 @@
-# Circuit-Guided Pruning
+# [Circuit-Guided Pruning](https://drive.google.com/file/d/10zPsSs9PzYx-rXLTB944eATeIs3sQkGi/view?usp=sharing)
 
 **From Interpretability Scores to Sparsity Budgets in Large Language Models**
 
