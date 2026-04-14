@@ -1,0 +1,8 @@
+__pycache__/
+*.pt
+*.bin
+*.safetensors
+*.ckpt
+scores/*.pkl
+.cache/
+
