@@ -181,11 +181,21 @@ def run_experiment_2(args):
         from attribution_nodes import run_relp_nodes, relp_to_layer_importance
         from data import load_texts
 
-        print("\n[1/3] Running RelP attribution...")
-        tl_model = HookedTransformer.from_pretrained(
-            MODEL_NAME, center_writing_weights=False,
-            center_unembed=False, fold_ln=False,
+        from transformers import AutoModelForCausalLM, AutoTokenizer
+        hf_model = AutoModelForCausalLM.from_pretrained(
+            MODEL_NAME, dtype=torch.float16,
         )
+        tl_model = HookedTransformer.from_pretrained(
+            "llama-7b-hf", 
+            hf_model=hf_model,
+            center_writing_weights=False,
+            center_unembed=False, 
+            fold_ln=False,
+        use_attn_result=True,
+        )
+        tl_model.cfg.use_attn_result = True
+        tl_model.set_tokenizer(AutoTokenizer.from_pretrained(MODEL_NAME))
+        del hf_model
 
         texts = load_texts(args.dataset, args.n_attr_samples)
         sub_scores = run_relp_nodes(tl_model, texts,
