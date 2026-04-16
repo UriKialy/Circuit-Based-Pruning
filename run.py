@@ -47,7 +47,7 @@ from corruption import shuffle_tokens
 def parse_args():
     p = argparse.ArgumentParser()
     p.add_argument("--experiment", type=str, default="1",
-                   choices=["1", "2", "3", "all"])
+                       choices=["1", "2", "3", "4a", "4b", "all"])
     p.add_argument("--step", type=str, default="full",
                    choices=["full", "attribution_only", "prune_only"])
     p.add_argument("--sparsity", type=float, nargs="+", default=[0.3, 0.5, 0.7])
@@ -66,6 +66,8 @@ def parse_args():
     p.add_argument("--scores_dir", type=str, default="./scores")
     p.add_argument("--results_dir", type=str, default="./results")
     p.add_argument("--device", type=str, default="cuda:0")
+    p.add_argument("--protect_pct", type=float, nargs="+", default=[0.2],
+                   help="Protection percentage(s) — sweep supported.")
     return p.parse_args()
 
 
@@ -193,7 +195,9 @@ def run_experiment_2(args):
             fold_ln=False,
         use_attn_result=True,
         )
-        tl_model.cfg.use_attn_result = True
+        tl_model.cfg.use_attn_result = False
+        tl_model.cfg.use_hook_mlp_in = False
+        tl_model.cfg.use_attn_in = False
         tl_model.set_tokenizer(AutoTokenizer.from_pretrained(MODEL_NAME))
         del hf_model
 
@@ -366,34 +370,208 @@ def _print_results(results, title):
 # ═══════════════════════════════════════════════════════════════
 
 PAPER_BASELINES = {
-    "dense":    {"ppl": 5.68},
+    "dense": {"ppl": 5.68}, # 
     "wanda": {
-        "0.5_unstructured": 7.26,
-        "0.5_2:4":          11.53,
-        "0.5_4:8":          8.57,
+        "0.5_unstructured": 7.26, # 
+        "0.5_2:4": 11.53,         # 
+        "0.5_4:8": 8.57,          # 
+        "0.6_unstructured": 9.71, # 
+        "0.7_unstructured": 76.17,# 
+        "0.8_unstructured": 1942.53 # 
     },
     "wandapp": {
-        "0.5_unstructured": 7.02,
-        "0.5_2:4":          9.43,
-        "0.5_4:8":          7.88,
+        "0.5_unstructured": 7.02, # 
+        "0.5_2:4": 9.43,          # 
+        "0.5_4:8": 7.88,          # 
+        "0.6_unstructured": 9.50, # 
+        "0.7_unstructured": 55.52,# 
+        "0.8_unstructured": 1586.69 # 
     },
     "sparsegpt": {
-        "0.5_unstructured": 7.22,
-        "0.5_2:4":          11.00,
+        "0.5_unstructured": 7.22, # 
+        "0.5_2:4": 11.00,         # 
+        "0.5_4:8": 8.61,          # 
     },
+    "gblm": {
+        "0.5_unstructured": 7.15, # 
+        "0.5_2:4": 11.33,         # 
+        "0.5_4:8": 8.48,          # 
+        "0.6_unstructured": 10.37,# 
+        "0.7_unstructured": 54.60,# 
+        "0.8_unstructured": 2550.10 # 
+    }
 }
 
+# ═══════════════════════════════════════════════════════════════
+#  Experiment 4a: EAP-IG weight protection + Wanda pruning
+# ═══════════════════════════════════════════════════════════════
 
+def run_experiment_4a(args):
+    """
+    Protect top X% per matrix (by EAP-IG score + matrix multipliers).
+    Wanda prunes the rest.
+    """
+    print("\n" + "=" * 70)
+    print("  EXPERIMENT 4a: EAP-IG protection + Wanda")
+    print("=" * 70)
+    device = torch.device(args.device)
+    os.makedirs(args.scores_dir, exist_ok=True)
+    os.makedirs(args.results_dir, exist_ok=True)
+
+    # Load cached EAP-IG scores (from exp 1)
+    scores_path = os.path.join(args.scores_dir,
+        f"eap_ig_weights_{args.dataset}_{args.ig_metric}_s{args.n_attr_samples}.pkl")
+    if not os.path.exists(scores_path):
+        print(f"ERROR: EAP-IG scores not found at {scores_path}")
+        print("Run: python run.py --experiment 1 --step attribution_only first")
+        return
+    eap_scores = load_scores(scores_path)
+
+    from pruning import prune_with_protection
+    from protection import matrix_multiplier_protection
+    from sparsity import uniform_sparsity
+
+    tokenizer = load_tokenizer()
+    all_results = {}
+
+    for protect in args.protect_pct:
+        results = {}
+        for target in args.sparsity:
+            print(f"\n── Sparsity: {target:.0%}, Protect base: {protect:.0%} ──")
+            model = load_model()
+
+            sp_map = uniform_sparsity(model, target)
+            pct_map = matrix_multiplier_protection(
+                n_layers=len(model.model.layers),
+                base_pct=protect,
+            )
+
+            prune_with_protection(
+                model, tokenizer, sp_map,
+                protect_scores=eap_scores,
+                protect_pct_map=pct_map,
+                nsamples=args.n_cal_samples, device=device,
+            )
+
+            actual_sp = check_sparsity(model)
+            ppl = eval_perplexity_wikitext2(model, tokenizer, device)
+            print(f"  Verified sparsity: {actual_sp:.4f}")
+            print(f"  Perplexity: {ppl:.2f}")
+            results[f"{target:.0%}"] = {"sparsity": actual_sp, "ppl": ppl}
+
+            del model
+            free_memory()
+
+        all_results[f"protect={protect}"] = results
+        _print_results(results, f"Exp 4a: EAP-IG protect (X={protect:.0%})")
+
+    out_path = os.path.join(args.results_dir, "exp4a_eap_protect.json")
+    with open(out_path, "w") as f:
+        json.dump(all_results, f, indent=2)
+    print(f"\nResults saved to {out_path}")
+
+
+# ═══════════════════════════════════════════════════════════════
+#  Experiment 4b: RelP-layer + RGS-weight protection + Wanda pruning
+# ═══════════════════════════════════════════════════════════════
+
+def run_experiment_4b(args):
+    """
+    Per-layer protection driven by RelP importance.
+    Within each matrix, top X% by Wanda++ RGS score protected.
+    Wanda prunes the rest.
+    """
+    print("\n" + "=" * 70)
+    print("  EXPERIMENT 4b: RelP-layer + RGS-weight protection + Wanda")
+    print("=" * 70)
+    device = torch.device(args.device)
+    os.makedirs(args.scores_dir, exist_ok=True)
+    os.makedirs(args.results_dir, exist_ok=True)
+
+    # Load RelP layer importance
+    relp_path = os.path.join(args.scores_dir,
+        f"relp_nodes_{args.dataset}_s{args.n_attr_samples}.pkl")
+    if not os.path.exists(relp_path):
+        print(f"ERROR: RelP scores not found at {relp_path}")
+        print("Run: python run.py --experiment 2 --step attribution_only first")
+        return
+    relp_data = load_scores(relp_path)
+    layer_importance = relp_data["layer_importance"]
+
+    # Load or compute RGS weight scores
+    rgs_path = os.path.join(args.scores_dir,
+        f"rgs_weights_{args.dataset}_s{args.n_attr_samples}.pkl")
+    if os.path.exists(rgs_path):
+        print(f"Loading cached RGS scores...")
+        rgs_scores = load_scores(rgs_path)
+    else:
+        print("Computing RGS scores...")
+        from attribution_weights import compute_rgs_scores
+        from data import get_calibration_loader
+        model = load_model()
+        tokenizer = load_tokenizer()
+        dataloader = get_calibration_loader(
+            args.dataset, args.n_attr_samples, 0,
+            MAX_SEQ_LEN, tokenizer)
+        rgs_scores = compute_rgs_scores(model, dataloader, device)
+        save_scores(rgs_scores, rgs_path)
+        del model
+        free_memory()
+
+    from pruning import prune_with_protection
+    from protection import relp_layered_protection
+    from sparsity import uniform_sparsity
+
+    tokenizer = load_tokenizer()
+    all_results = {}
+
+    for protect in args.protect_pct:
+        results = {}
+        for target in args.sparsity:
+            print(f"\n── Sparsity: {target:.0%}, Protect base: {protect:.0%} ──")
+            model = load_model()
+
+            sp_map = uniform_sparsity(model, target)
+            pct_map = relp_layered_protection(
+                layer_importance=layer_importance,
+                n_layers=len(model.model.layers),
+                base_pct=protect,
+            )
+
+            prune_with_protection(
+                model, tokenizer, sp_map,
+                protect_scores=rgs_scores,
+                protect_pct_map=pct_map,
+                nsamples=args.n_cal_samples, device=device,
+            )
+
+            actual_sp = check_sparsity(model)
+            ppl = eval_perplexity_wikitext2(model, tokenizer, device)
+            print(f"  Verified sparsity: {actual_sp:.4f}")
+            print(f"  Perplexity: {ppl:.2f}")
+            results[f"{target:.0%}"] = {"sparsity": actual_sp, "ppl": ppl}
+
+            del model
+            free_memory()
+
+        all_results[f"protect={protect}"] = results
+        _print_results(results, f"Exp 4b: RelP+RGS protect (X={protect:.0%})")
+
+    out_path = os.path.join(args.results_dir, "exp4b_relp_rgs_protect.json")
+    with open(out_path, "w") as f:
+        json.dump(all_results, f, indent=2)
+    print(f"\nResults saved to {out_path}")
+    
 if __name__ == "__main__":
     args = parse_args()
-
     if args.experiment == "1" or args.experiment == "all":
         run_experiment_1(args)
-
     if args.experiment == "2" or args.experiment == "all":
         run_experiment_2(args)
-
     if args.experiment == "3" or args.experiment == "all":
         run_experiment_3(args)
-
+    if args.experiment == "4a" or args.experiment == "all":
+        run_experiment_4a(args)
+    if args.experiment == "4b" or args.experiment == "all":
+        run_experiment_4b(args)
     print("\nDone!")

@@ -1,0 +1,8 @@
+
+======================================================================
+  EXPERIMENT 4b: RelP-layer + RGS-weight protection + Wanda
+======================================================================
+ERROR: RelP scores not found at ./scores/relp_nodes_pile10k_s128.pkl
+Run: python run.py --experiment 2 --step attribution_only first
+
+Done!

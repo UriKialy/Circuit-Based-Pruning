@@ -280,6 +280,145 @@ def prune_model(model, tokenizer, sparsity_map, scoring_method="wanda",
 
 
 # ═══════════════════════════════════════════════════════════════
+#  Protection-aware pruning (exp 4a / 4b)
+# ═══════════════════════════════════════════════════════════════
+
+def prune_with_protection(model, tokenizer, sparsity_map,
+                           protect_scores, protect_pct_map,
+                           nsamples=128, seed=0,
+                           device=torch.device("cuda:0"),
+                           safety_margin=0.02, verbose=True):
+    """
+    Prune with per-weight protection.
+
+    Flow per matrix:
+      1. Use protect_scores to rank weights; top protect_pct% are PROTECTED.
+      2. Compute Wanda score |W|*||X|| on calibration data for ALL weights.
+      3. Prune bottom weights among UNPROTECTED to hit matrix sparsity target.
+      4. If target > (1 - protect_pct), cap at (1 - protect_pct - margin).
+
+    Args:
+        protect_scores:   dict (layer, matrix) -> (d_out, d_in) tensor
+                          (EAP-IG for 4a, RGS for 4b, etc.)
+        protect_pct_map:  dict (layer, matrix) -> float in [0,1]
+        sparsity_map:     dict (layer, matrix) -> target sparsity
+        safety_margin:    keep this much unprotected+unpruned space
+    """
+    from protection import clamp_protection_vs_sparsity
+
+    use_cache = model.config.use_cache
+    model.config.use_cache = False
+
+    from data import get_calibration_loader
+    dataloader = get_calibration_loader(
+        "pile10k", nsamples, seed, model.seqlen, tokenizer)
+
+    if verbose:
+        print(f"Pruning with protection: scores + Wanda on unprotected")
+
+    inps, outs, attention_mask, position_ids = _prepare_inputs(
+        model, dataloader, device)
+    position_embeddings = _get_rope(model, inps, device)
+
+    layers = model.model.layers
+    for layer_idx in range(len(layers)):
+        layer = layers[layer_idx]
+        subset = find_layers(layer)
+
+        layer_dev = device
+        if hasattr(model, "hf_device_map"):
+            key = f"model.layers.{layer_idx}"
+            if key in model.hf_device_map:
+                layer_dev = model.hf_device_map[key]
+
+        # Collect input stats (Wanda)
+        wrapped = {name: WrappedGPT(subset[name]) for name in subset}
+
+        def make_hook(name):
+            def hook_fn(_, inp, out):
+                wrapped[name].add_batch(inp[0].data, out.data)
+            return hook_fn
+
+        handles = [subset[n].register_forward_hook(make_hook(n)) for n in subset]
+
+        fwd_kwargs = _make_layer_fwd_kwargs(
+            attention_mask, position_ids, position_embeddings, layer_dev)
+
+        for j in range(nsamples):
+            inp_j = inps[j] if isinstance(inps, list) else inps[j:j+1]
+            if inp_j.dim() == 2:
+                inp_j = inp_j.unsqueeze(0)
+            with torch.no_grad():
+                out_j = layer(inp_j.to(layer_dev), **fwd_kwargs)[0]
+                if not isinstance(inps, list):
+                    outs[j] = out_j
+
+        for h in handles:
+            h.remove()
+
+        # Prune each matrix with protection
+        for name in subset:
+            key = (layer_idx, name)
+            target_sp = sparsity_map.get(key, 0.0)
+            protect_pct = protect_pct_map.get(key, 0.0)
+
+            if target_sp <= 0:
+                continue
+
+            # Clamp protection vs sparsity
+            protect_pct_eff = clamp_protection_vs_sparsity(
+                protect_pct, target_sp, safety_margin)
+
+            W = subset[name].weight
+            input_norm = wrapped[name].get_input_norm()
+
+            # Wanda score for ALL weights
+            wanda = W.data.abs() * input_norm.unsqueeze(0)
+
+            # Build protection mask from protect_scores
+            from protection import build_protection_mask
+            p_scores = protect_scores.get(key)
+            if p_scores is None or protect_pct_eff <= 0:
+                protected_mask = torch.zeros_like(W.data, dtype=torch.bool)
+            else:
+                protected_mask = build_protection_mask(
+                    W.data, p_scores.to(W.device), protect_pct_eff)
+
+            # Set protected weights' Wanda score to +inf so they never get picked
+            wanda_for_pruning = wanda.clone()
+            wanda_for_pruning[protected_mask] = float('inf')
+
+            # Prune bottom-k by Wanda among unprotected
+            prune_layer_by_score(W, wanda_for_pruning, target_sp)
+
+        if verbose:
+            tot_z, tot_p = 0, 0
+            for n in subset:
+                w = subset[n].weight.data
+                tot_z += (w == 0).sum().item()
+                tot_p += w.numel()
+            print(f"  layer {layer_idx}: sparsity {tot_z/tot_p:.4f}")
+
+        # Forward through pruned layer
+        for j in range(nsamples):
+            inp_j = inps[j] if isinstance(inps, list) else inps[j:j+1]
+            if inp_j.dim() == 2:
+                inp_j = inp_j.unsqueeze(0)
+            with torch.no_grad():
+                out_j = layer(inp_j.to(layer_dev), **fwd_kwargs)[0]
+                if isinstance(inps, list):
+                    inps[j] = out_j.detach().cpu()
+                else:
+                    outs[j] = out_j
+
+        if not isinstance(inps, list):
+            inps, outs = outs, inps
+
+        torch.cuda.empty_cache()
+
+    model.config.use_cache = use_cache
+
+# ═══════════════════════════════════════════════════════════════
 #  Internal helpers
 # ═══════════════════════════════════════════════════════════════
 

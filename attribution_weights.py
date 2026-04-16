@@ -365,3 +365,82 @@ def _get_position_embeddings(model, sample_inps, position_ids, device):
             return (pos_emb[0].cpu(), pos_emb[1].cpu())
     except Exception:
         return None
+
+# ═══════════════════════════════════════════════════════════════
+#  Wanda++ RGS score computation (for exp 4b)
+# ═══════════════════════════════════════════════════════════════
+
+def compute_rgs_scores(model, dataloader, device):
+    """
+    Compute Wanda++ Regional Gradient Score per weight, block by block.
+
+    RGS = sqrt(mean over samples of (grad_wrt_L2_block_output)^2)
+
+    This is a simpler gradient than EAP-IG — single point, not integrated.
+    Used for exp 4b protection ranking.
+
+    Returns:
+        dict of (layer_idx, matrix_name) -> (d_out, d_in) tensor (on CPU)
+    """
+    from pruning import find_layers
+
+    print("Preparing block inputs for RGS...")
+    inps, attention_mask, position_ids = prepare_block_inputs(
+        model, dataloader, device)
+    position_embeddings = _get_position_embeddings(
+        model, inps, position_ids, device)
+
+    layers = model.model.layers
+    all_scores = {}
+
+    for layer_idx in range(len(layers)):
+        print(f"\n== RGS block {layer_idx}/{len(layers)-1} ==")
+        block = layers[layer_idx]
+        subset = find_layers(block)
+        block_device = next(block.parameters()).device
+
+        # Enable grads on weights
+        for p in block.parameters():
+            p.requires_grad_(True)
+
+        sq_grad = {name: torch.zeros_like(subset[name].weight, dtype=torch.float32)
+                   for name in subset}
+        n_samples = 0
+
+        fwd_kw = _make_fwd_kwargs(
+            attention_mask, position_ids, position_embeddings, block_device)
+
+        for inp in tqdm(inps, desc=f"  samples", leave=False):
+            inp_dev = inp.to(block_device).requires_grad_(False)
+            for name in subset:
+                if subset[name].weight.grad is not None:
+                    subset[name].weight.grad.zero_()
+            out = block(inp_dev, **fwd_kw)
+            if isinstance(out, tuple):
+                out = out[0]
+            loss = torch.norm(out)
+            loss.backward(retain_graph=False)
+            with torch.no_grad():
+                for name in subset:
+                    g = subset[name].weight.grad
+                    if g is not None:
+                        sq_grad[name] += g.float() ** 2
+            n_samples += 1
+            del out, loss, inp_dev
+
+        # RGS = sqrt(mean squared gradient)
+        for name in subset:
+            rgs = torch.sqrt(sq_grad[name] / max(n_samples, 1))
+            all_scores[(layer_idx, name)] = rgs.cpu()
+
+        # Forward unpruned for next block
+        print(f"  Forwarding through block {layer_idx}...")
+        inps = forward_block_unpruned(
+            block, inps, attention_mask, position_ids,
+            position_embeddings=position_embeddings)
+
+        for p in block.parameters():
+            p.requires_grad_(False)
+        torch.cuda.empty_cache()
+
+    return all_scores

@@ -36,3 +36,32 @@ EVAL_SEQLEN = 2048
 
 # Sparsity allocation
 DEFAULT_TEMPERATURE = 5.0
+
+# ═══════════════════════════════════════════════════════════════
+#  Experiment 4 — Protection-based pruning
+# ═══════════════════════════════════════════════════════════════
+
+# Per-matrix protection multipliers (literature prior)
+#   q/k → redundant (multi-head)
+#   v/gate/up → neutral
+#   o/down → sensitive (residual integrators)
+# Change these freely — they just scale the protection % per matrix.
+PROTECTION_MULTIPLIERS = {
+    "self_attn.q_proj": 0.7,
+    "self_attn.k_proj": 0.7,
+    "self_attn.v_proj": 1.0,
+    "self_attn.o_proj": 1.3,
+    "mlp.gate_proj":    1.0,
+    "mlp.up_proj":      1.0,
+    "mlp.down_proj":    1.3,
+}
+
+# Per-layer protection spread for exp 4b (RelP-driven)
+#   (min_mult, max_mult) — layer with highest RelP gets max_mult, lowest gets min_mult
+#   (1.0, 1.0) disables layer weighting (uniform across layers)
+#   (0.5, 1.5) = wide spread / "worst case"
+#   (0.8, 1.2) = moderate (default)
+LAYER_PROTECTION_SPREAD = (0.8, 1.2)
+
+# Embedding-level Gaussian noise (applied during corrupted forward pass)
+EMBEDDING_NOISE_STD = 0.05

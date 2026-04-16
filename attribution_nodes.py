@@ -1,47 +1,38 @@
 # attribution_nodes.py — node-level circuit discovery
 #
-# Two methods:
-#   1. EAP-IG: uses the EAP library + TransformerLens (existing, from notebook)
-#   2. RelP:   uses RelP-modified TransformerLens (existing, from notebook)
-#
-# Both produce per-layer importance scores for sparsity allocation.
+# EAP-IG (full library) and RelP (direct hook-based).
+# Now includes optional Gaussian noise on embeddings during corrupted forward.
 
 import torch
 import torch.nn as nn
-from collections import defaultdict
 from torch.utils.data import Dataset, DataLoader
 from tqdm import tqdm
 
-from config import N_LAYERS, N_HEADS, D_MODEL, D_HEAD, D_FF
+from config import N_LAYERS, N_HEADS, D_MODEL, D_HEAD, D_FF, EMBEDDING_NOISE_STD
+from corruption import make_tl_embedding_noise_hook
 
 
 # ═══════════════════════════════════════════════════════════════
-#  EAP-IG node-level (requires TransformerLens + EAP library)
+#  EAP-IG node-level (unchanged)
 # ═══════════════════════════════════════════════════════════════
 
 class TextPairDataset(Dataset):
-    """Simple dataset that returns (clean, corrupted, label) text triples."""
     def __init__(self, texts, max_words=20):
         self.texts = [" ".join(t.split()[:max_words]) for t in texts]
-
-    def __len__(self):
-        return len(self.texts)
-
+    def __len__(self): return len(self.texts)
     def __getitem__(self, idx):
         return self.texts[idx], self.texts[idx], 0
 
 
 def collate_same(batch):
-    """Pass identical strings — corruption happens in patched tokenize_plus."""
     clean_list, _, labels = zip(*batch)
     return list(clean_list), list(clean_list), torch.tensor(list(labels))
 
 
 def perplexity_metric(logits, clean_logits, input_lengths, labels,
                       mean=True, loss=True):
-    """CE loss using argmax of clean_logits as pseudo-targets."""
     batch_size = logits.size(0)
-    total_loss = torch.tensor(0.0, device=logits.device, dtype=torch.float32)
+    total = torch.tensor(0.0, device=logits.device, dtype=torch.float32)
     count = 0
     for b in range(batch_size):
         seq_len = min(input_lengths[b].item(), logits.size(1))
@@ -50,22 +41,15 @@ def perplexity_metric(logits, clean_logits, input_lengths, labels,
         targets = clean_logits[b, :seq_len - 1].detach().argmax(dim=-1)
         pred = logits[b, :seq_len - 1].float()
         ce = nn.functional.cross_entropy(pred, targets)
-        total_loss = total_loss + ce
+        total = total + ce
         count += 1
-    result = total_loss / max(count, 1)
+    result = total / max(count, 1)
     return result if loss else -result
 
 
-def patch_tokenize_for_shuffle(eap_module, noise_std=0.05):
-    """
-    Patch EAP's tokenize_plus so every 2nd call shuffles tokens.
-    Call this BEFORE running attribution.
-    Returns counter dict so you can reset it.
-    """
+def patch_tokenize_for_shuffle(eap_module):
     from eap.utils import tokenize_plus as _orig
-
     counter = {"n": 0}
-
     def patched(model, inputs, max_length=None):
         tokens, attn_mask, input_lengths, n_pos = _orig(model, inputs, max_length)
         counter["n"] += 1
@@ -76,32 +60,23 @@ def patch_tokenize_for_shuffle(eap_module, noise_std=0.05):
                     perm = torch.randperm(seq_len - 1, device=tokens.device) + 1
                     tokens[b, 1:seq_len] = tokens[b, perm]
         return tokens, attn_mask, input_lengths, n_pos
-
     eap_module.tokenize_plus = patched
     return counter
 
 
 def run_eap_ig_nodes(tl_model, texts, max_words=20, batch_size=1):
-    """
-    Run EAP-IG node-level attribution using TransformerLens model.
-    Returns: raw_scores tensor (n_forward_nodes,)
-    """
     from functools import partial
     from eap.graph import Graph
     from eap.attribute_node import attribute_node
     import eap.attribute_node as eap_mod
 
-    # Patch corruption
     counter = patch_tokenize_for_shuffle(eap_mod)
-
     dataset = TextPairDataset(texts, max_words=max_words)
     dataloader = DataLoader(dataset, batch_size=batch_size,
                             collate_fn=collate_same, shuffle=False)
-
     counter["n"] = 0
     graph = Graph.from_model(tl_model, node_scores=True)
     print(f"Graph: {graph.n_forward} forward nodes")
-
     attribute_node(
         tl_model, graph, dataloader,
         partial(perplexity_metric, loss=True, mean=True),
@@ -111,29 +86,22 @@ def run_eap_ig_nodes(tl_model, texts, max_words=20, batch_size=1):
 
 
 def extract_node_scores(raw_scores, n_layers, n_heads):
-    """
-    Convert raw EAP-IG node scores → dict of component scores.
-    Handles the graph index layout: [input, a0.h0, ..., a0.hN, m0, a1.h0, ...].
-    """
     params_per_head = 4 * D_MODEL * D_HEAD
     params_per_mlp = 3 * D_MODEL * D_FF
-
     scores = {}
-    idx = 1  # skip input node
+    idx = 1
     for layer in range(n_layers):
         for head in range(n_heads):
-            name = f"a{layer}.h{head}"
             raw = raw_scores[idx].item()
-            scores[name] = {
+            scores[f"a{layer}.h{head}"] = {
                 "type": "head", "layer": layer, "head": head,
                 "raw_score": raw,
                 "normalized_score": abs(raw) / params_per_head,
                 "params": params_per_head,
             }
             idx += 1
-        name = f"m{layer}"
         raw = raw_scores[idx].item()
-        scores[name] = {
+        scores[f"m{layer}"] = {
             "type": "mlp", "layer": layer,
             "raw_score": raw,
             "normalized_score": abs(raw) / params_per_mlp,
@@ -144,53 +112,36 @@ def extract_node_scores(raw_scores, n_layers, n_heads):
 
 
 def node_scores_to_layer_importance(component_scores, n_layers):
-    """
-    Aggregate per-component scores → per-layer importance.
-    Sum of |score| across all heads + MLP in each layer.
-    """
-    layer_importance = {}
+    layer_imp = {}
     for layer in range(n_layers):
         total = 0.0
         for name, info in component_scores.items():
             if info["layer"] == layer:
                 total += abs(info["raw_score"])
-        layer_importance[layer] = total
-    return layer_importance
+        layer_imp[layer] = total
+    return layer_imp
 
 
 # ═══════════════════════════════════════════════════════════════
-#  RelP node-level (requires RelP-modified TransformerLens)
+#  RelP node-level (now with proper memory management + noise)
 # ═══════════════════════════════════════════════════════════════
 
-def run_relp_nodes(tl_model, texts, num_samples=500, max_seq_len=128):
-    """
-    Run RelP sub-component attribution using TransformerLens model.
-    RelP = attribution patching with LRP backward pass.
-
-    Returns:
-        sub_scores: dict of (layer, hook_name) → scalar score
-    """
+def run_relp_nodes(tl_model, texts, num_samples=500, max_seq_len=128,
+                    add_noise=True, noise_std=None):
+    """Memory-efficient RelP: one layer at a time to avoid OOM."""
     from transformer_lens import ActivationCache
-
+    if noise_std is None:
+        noise_std = EMBEDDING_NOISE_STD
     n_layers = tl_model.cfg.n_layers
     loss_fct = nn.CrossEntropyLoss()
-
+    n_samples = min(num_samples, len(texts))
     sub_hooks = [
         'attn.hook_q', 'attn.hook_k', 'attn.hook_v', 'attn.hook_z',
-        'attn.hook_result',
         'mlp.hook_pre', 'mlp.hook_pre_linear', 'mlp.hook_post',
         'hook_mlp_out',
     ]
-
-    sub_scores = {}
-    for layer in range(n_layers):
-        for hook in sub_hooks:
-            sub_scores[(layer, hook)] = 0.0
-
-    # Cache helpers
-    filter_fn = lambda name: "_input" not in name and "attn_in" not in name
-
-    tokens_global = [None]  # mutable container for closure
+    sub_scores = {(l, h): 0.0 for l in range(n_layers) for h in sub_hooks}
+    tokens_global = [None]
 
     def ce_metric(logits):
         shift_logits = logits[:, :-1, :].contiguous().float()
@@ -200,70 +151,69 @@ def run_relp_nodes(tl_model, texts, num_samples=500, max_seq_len=128):
             shift_labels.view(-1),
         )
 
-    def get_cache_fwd_and_bwd(model, tokens, metric):
-        model.reset_hooks()
-        cache = {}
-        def fwd_hook(act, hook):
-            cache[hook.name] = act.detach()
-        model.add_hook(filter_fn, fwd_hook, "fwd")
+    print(f"Pre-tokenizing {n_samples} samples...")
+    all_clean, all_corrupt = [], []
+    for i in range(n_samples):
+        clean = tl_model.to_tokens(texts[i])[:, :max_seq_len]
+        corrupt = clean.clone()
+        sl = clean.size(1)
+        if sl > 2:
+            perm = torch.randperm(sl - 1, device=clean.device) + 1
+            corrupt[0, 1:] = clean[0, perm]
+        all_clean.append(clean.cpu())
+        all_corrupt.append(corrupt.cpu())
 
-        grad_cache = {}
-        def bwd_hook(act, hook):
-            grad_cache[hook.name] = act.detach()
-        model.add_hook(filter_fn, bwd_hook, "bwd")
+    for layer in tqdm(range(n_layers), desc="RelP layers"):
+        allowed = {f"blocks.{layer}.{h}" for h in sub_hooks}
+        layer_filter = lambda name, _a=allowed: name in _a
 
-        value = metric(model(tokens))
-        value.backward()
-        model.reset_hooks()
-        return value.item(), ActivationCache(cache, model), ActivationCache(grad_cache, model)
+        for s_idx in range(n_samples):
+            clean_tokens = all_clean[s_idx].to(tl_model.cfg.device)
+            corrupt_tokens = all_corrupt[s_idx].to(tl_model.cfg.device)
 
-    # ── Main loop ──
-    from datasets import load_dataset
-    pile = load_dataset("NeelNanda/pile-10k", split="train")
+            tl_model.reset_hooks()
+            clean_cache, clean_grad = {}, {}
+            def clean_fwd(act, hook): clean_cache[hook.name] = act.detach()
+            def clean_bwd(act, hook): clean_grad[hook.name] = act.detach()
+            tl_model.add_hook(layer_filter, clean_fwd, "fwd")
+            tl_model.add_hook(layer_filter, clean_bwd, "bwd")
+            tokens_global[0] = clean_tokens
+            value = ce_metric(tl_model(clean_tokens))
+            value.backward()
+            tl_model.reset_hooks()
 
-    for i in tqdm(range(min(num_samples, len(texts))), desc="RelP attribution"):
-        text = texts[i]
-        clean_tokens = tl_model.to_tokens(text)[:, :max_seq_len]
+            corrupt_cache, corrupt_grad = {}, {}
+            def corr_fwd(act, hook): corrupt_cache[hook.name] = act.detach()
+            def corr_bwd(act, hook): corrupt_grad[hook.name] = act.detach()
+            tl_model.add_hook(layer_filter, corr_fwd, "fwd")
+            tl_model.add_hook(layer_filter, corr_bwd, "bwd")
+            if add_noise:
+                noise_hook = make_tl_embedding_noise_hook(std=noise_std)
+                tl_model.add_hook('hook_embed', noise_hook, 'fwd')
+            tokens_global[0] = corrupt_tokens
+            value = ce_metric(tl_model(corrupt_tokens))
+            value.backward()
+            tl_model.reset_hooks()
 
-        # Token-level corruption
-        corrupted_tokens = clean_tokens.clone()
-        seq_len = clean_tokens.size(1)
-        if seq_len > 2:
-            perm = torch.randperm(seq_len - 1, device=clean_tokens.device) + 1
-            corrupted_tokens[0, 1:] = clean_tokens[0, perm]
-
-        tokens_global[0] = clean_tokens
-        _, clean_cache, clean_grad = get_cache_fwd_and_bwd(
-            tl_model, clean_tokens, ce_metric)
-
-        tokens_global[0] = corrupted_tokens
-        _, corrupt_cache, corrupt_grad = get_cache_fwd_and_bwd(
-            tl_model, corrupted_tokens, ce_metric)
-
-        with torch.no_grad():
-            for layer in range(n_layers):
+            with torch.no_grad():
                 for hook in sub_hooks:
                     key = f"blocks.{layer}.{hook}"
-                    if (key in clean_cache.cache_dict and
-                        key in corrupt_cache.cache_dict and
-                        key in corrupt_grad.cache_dict):
+                    if (key in clean_cache and key in corrupt_cache
+                            and key in corrupt_grad):
                         diff = clean_cache[key] - corrupt_cache[key]
                         grad = corrupt_grad[key]
-                        score = (grad * diff).abs().sum().item()
-                        sub_scores[(layer, hook)] += score
+                        sub_scores[(layer, hook)] += (grad * diff).abs().sum().item()
 
-        if i % 50 == 0:
+            del clean_cache, clean_grad, corrupt_cache, corrupt_grad
+            del clean_tokens, corrupt_tokens
+            tl_model.zero_grad(set_to_none=True)
             torch.cuda.empty_cache()
 
-    # Average
     for k in sub_scores:
-        sub_scores[k] /= num_samples
-
+        sub_scores[k] /= n_samples
     return sub_scores
 
-
 def relp_to_layer_importance(sub_scores, n_layers):
-    """Convert RelP sub-component scores → per-layer importance."""
     layer_imp = {}
     for layer in range(n_layers):
         total = 0.0
@@ -275,24 +225,24 @@ def relp_to_layer_importance(sub_scores, n_layers):
 
 
 # ═══════════════════════════════════════════════════════════════
-#  Hook-to-weight mapping (for RelP sub-component → matrix)
+#  Hook-to-weight mapping
 # ═══════════════════════════════════════════════════════════════
 
 HOOK_TO_WEIGHT = {
-    'attn.hook_q':          'self_attn.q_proj',
-    'attn.hook_k':          'self_attn.k_proj',
-    'attn.hook_v':          'self_attn.v_proj',
-    'attn.hook_result':     'self_attn.o_proj',
-    'mlp.hook_pre':         'mlp.gate_proj',
-    'mlp.hook_pre_linear':  'mlp.up_proj',
-    'hook_mlp_out':         'mlp.down_proj',
+    'attn.hook_q':         'self_attn.q_proj',
+    'attn.hook_k':         'self_attn.k_proj',
+    'attn.hook_v':         'self_attn.v_proj',
+    'attn.hook_z':         'self_attn.o_proj',  
+    'mlp.hook_pre':        'mlp.gate_proj',
+    'mlp.hook_pre_linear': 'mlp.up_proj',
+    'hook_mlp_out':        'mlp.down_proj'
 }
 
+
 def relp_to_matrix_importance(sub_scores, n_layers):
-    """Convert RelP sub-component scores → per-matrix importance dict."""
+    """Convert RelP sub-component scores → per-matrix scalar importance."""
     importance = {}
     for (layer, hook), score in sub_scores.items():
         if hook in HOOK_TO_WEIGHT:
-            matrix_name = HOOK_TO_WEIGHT[hook]
-            importance[(layer, matrix_name)] = score
+            importance[(layer, HOOK_TO_WEIGHT[hook])] = score
     return importance

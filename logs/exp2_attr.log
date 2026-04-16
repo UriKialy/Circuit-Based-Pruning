@@ -1,0 +1,9 @@
+
+======================================================================
+  EXPERIMENT 2: RelP node-level + non-uniform Wanda
+======================================================================
+Loading weights:   0%|                                                                                                                                        | 0/291 [00:00<?, ?it/s]Loading weights: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 291/291 [00:00<00:00, 8674.72it/s]
+WARNING:root:llama-7b-hf tokenizer not loaded. Please load manually.
+Loaded pretrained model llama-7b-hf into HookedTransformer
+Pre-tokenizing 128 samples...
+RelP layers:   0%|                                                                                                                                             | 0/32 [00:00<?, ?it/s]RelP layers:   3%|████                                                                                                                              | 1/32 [03:15<1:41:11, 195.85s/it]RelP layers:   6%|████████▏                                                                                                                         | 2/32 [06:32<1:38:01, 196.06s/it]RelP layers:   9%|████████████▏                                                                                                                     | 3/32 [09:53<1:35:52, 198.36s/it]RelP layers:  12%|████████████████▎                                                                                                                 | 4/32 [13:09<1:32:06, 197.39s/it]

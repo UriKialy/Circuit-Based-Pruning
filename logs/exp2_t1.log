@@ -1,0 +1,14 @@
+
+======================================================================
+  EXPERIMENT 2: RelP node-level + non-uniform Wanda
+======================================================================
+Traceback (most recent call last):
+  File "/workspace/Circuit-Based-Pruning/run.py", line 396, in <module>
+    run_experiment_2(args)
+  File "/workspace/Circuit-Based-Pruning/run.py", line 214, in run_experiment_2
+    loaded = load_scores(scores_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/Circuit-Based-Pruning/utils.py", line 74, in load_scores
+    with open(path, "rb") as f:
+         ^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: './scores/relp_nodes_pile10k_s128.pkl'

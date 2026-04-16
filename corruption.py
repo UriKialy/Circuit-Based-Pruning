@@ -1,23 +1,12 @@
 # corruption.py — modular corruption for clean vs corrupt pairs
-#
-# Design: separate functions for each corruption type + a wrapper
-# that can call one or both.
 
 import torch
 import numpy as np
+from config import EMBEDDING_NOISE_STD
 
 
 def shuffle_tokens(tokens):
-    """
-    Shuffle all non-BOS tokens in-place.
-    Destroys positional/syntactic structure, preserves token distribution.
-
-    Args:
-        tokens: (batch, seq_len) token ids
-
-    Returns:
-        shuffled: (batch, seq_len) — cloned & permuted
-    """
+    """Shuffle all non-BOS tokens. Returns cloned, permuted tensor."""
     shuffled = tokens.clone()
     for b in range(shuffled.size(0)):
         seq_len = shuffled.size(1)
@@ -27,95 +16,89 @@ def shuffle_tokens(tokens):
     return shuffled
 
 
-def add_embedding_noise(embeddings, std=0.05):
-    """
-    Add Gaussian noise to embedding activations.
-    Disrupts continuous representations.
+def add_embedding_noise(embeddings, std=None):
+    """Add Gaussian noise to embedding activations."""
+    if std is None:
+        std = EMBEDDING_NOISE_STD
+    return embeddings + torch.randn_like(embeddings) * std
 
-    Args:
-        embeddings: (batch, seq_len, d_model)
-        std: noise standard deviation
 
-    Returns:
-        noisy: (batch, seq_len, d_model)
+# ═══════════════════════════════════════════════════════════════
+#  Embedding hook — used during corrupted forward pass
+# ═══════════════════════════════════════════════════════════════
+
+def make_embedding_noise_hook(std=None):
     """
-    noise = torch.randn_like(embeddings) * std
-    return embeddings + noise
+    Returns (hook_fn, handle_container).
+
+    Usage for HF model:
+        hook_fn, container = make_embedding_noise_hook()
+        h = model.model.embed_tokens.register_forward_hook(hook_fn)
+        # ... corrupted forward ...
+        h.remove()
+
+    Usage for TransformerLens:
+        hook_fn_tl = make_tl_embedding_noise_hook()
+        model.add_hook('hook_embed', hook_fn_tl, 'fwd')
+        # ... corrupted forward ...
+        model.reset_hooks()
+    """
+    if std is None:
+        std = EMBEDDING_NOISE_STD
+
+    def hook_fn(module, input, output):
+        if isinstance(output, tuple):
+            return (output[0] + torch.randn_like(output[0]) * std,) + output[1:]
+        return output + torch.randn_like(output) * std
+
+    return hook_fn
+
+
+def make_tl_embedding_noise_hook(std=None):
+    """TransformerLens-style hook (signature: activation, hook)."""
+    if std is None:
+        std = EMBEDDING_NOISE_STD
+
+    def hook_fn(activation, hook):
+        return activation + torch.randn_like(activation) * std
+
+    return hook_fn
 
 
 def corrupt_tokens(clean_tokens, mode="shuffle"):
-    """
-    Produce corrupted token ids from clean ones.
-    Only applies token-level operations.
-
-    Args:
-        clean_tokens: (batch, seq_len)
-        mode: 'shuffle' — only option at token level
-
-    Returns:
-        corrupt: (batch, seq_len)
-    """
+    """Token-level corruption only."""
     if mode == "shuffle":
         return shuffle_tokens(clean_tokens)
-    else:
-        raise ValueError(f"Unknown token corruption mode: {mode}")
+    raise ValueError(f"Unknown token corruption mode: {mode}")
 
 
-def corrupt_embeddings(clean_embeddings, mode="noise", noise_std=0.05):
-    """
-    Produce corrupted embeddings from clean ones.
-    Only applies embedding-level operations.
-
-    Args:
-        clean_embeddings: (batch, seq_len, d_model)
-        mode: 'noise' — only option at embedding level
-
-    Returns:
-        corrupt: (batch, seq_len, d_model)
-    """
+def corrupt_embeddings(clean_embeddings, mode="noise", noise_std=None):
+    """Embedding-level corruption only."""
     if mode == "noise":
         return add_embedding_noise(clean_embeddings, std=noise_std)
-    else:
-        raise ValueError(f"Unknown embedding corruption mode: {mode}")
+    raise ValueError(f"Unknown embedding corruption mode: {mode}")
 
 
-def make_corrupt_pair(clean_tokens, embed_fn=None, mode="both", noise_std=0.05):
+def make_corrupt_pair(clean_tokens, embed_fn=None, mode="both", noise_std=None):
     """
-    Top-level wrapper that produces clean/corrupt pairs.
-
     Modes:
-        'shuffle'  — token shuffle only, returns (clean_tokens, corrupt_tokens)
-        'noise'    — Gaussian noise on embeddings only, returns (clean_embs, corrupt_embs)
-        'both'     — shuffle tokens AND add noise to embeddings of the shuffled version
-
-    Args:
-        clean_tokens: (batch, seq_len) token ids
-        embed_fn:     callable that maps tokens → embeddings (needed for 'noise'/'both')
-        mode:         'shuffle', 'noise', or 'both'
-        noise_std:    std for Gaussian noise
-
-    Returns:
-        If mode == 'shuffle': (clean_tokens, corrupt_tokens)
-        If mode == 'noise':   (clean_embs, corrupt_embs)
-        If mode == 'both':    (clean_embs, corrupt_embs)
-            where corrupt_embs = embed(shuffled_tokens) + noise
+        'shuffle' -> (clean_tokens, corrupt_tokens)
+        'noise'   -> (clean_embs, corrupt_embs)
+        'both'    -> (clean_embs, corrupt_embs) with shuffle + noise
     """
+    if noise_std is None:
+        noise_std = EMBEDDING_NOISE_STD
+
     if mode == "shuffle":
         return clean_tokens, shuffle_tokens(clean_tokens)
-
     if embed_fn is None:
         raise ValueError(f"embed_fn required for mode='{mode}'")
-
     if mode == "noise":
         clean_embs = embed_fn(clean_tokens)
-        corrupt_embs = add_embedding_noise(clean_embs, std=noise_std)
-        return clean_embs, corrupt_embs
-
+        return clean_embs, add_embedding_noise(clean_embs, std=noise_std)
     if mode == "both":
-        shuffled_tokens = shuffle_tokens(clean_tokens)
+        shuffled = shuffle_tokens(clean_tokens)
         clean_embs = embed_fn(clean_tokens)
-        corrupt_embs = embed_fn(shuffled_tokens)
-        corrupt_embs = add_embedding_noise(corrupt_embs, std=noise_std)
+        corrupt_embs = add_embedding_noise(embed_fn(shuffled), std=noise_std)
         return clean_embs, corrupt_embs
-
     raise ValueError(f"Unknown mode: {mode}")
