@@ -74,6 +74,12 @@ def prune_wanda_nonuniform(model, tokenizer, sparsity_map,
         inps, outs, attention_mask, position_ids = prepare_calibration_input(
             model, dataloader, device)
 
+    position_embeddings = None
+    if hasattr(model.model, 'rotary_emb'):
+        with torch.no_grad():
+            pos_ids = torch.arange(model.seqlen, device=inps.device).unsqueeze(0)
+            position_embeddings = model.model.rotary_emb(inps[:1], pos_ids)
+
     layers = model.model.layers
     for i in range(len(layers)):
         layer = layers[i]
@@ -102,7 +108,8 @@ def prune_wanda_nonuniform(model, tokenizer, sparsity_map,
             with torch.no_grad():
                 outs[j] = layer(inps[j].unsqueeze(0),
                                attention_mask=attention_mask,
-                               position_ids=position_ids)[0]
+                               position_ids=position_ids,
+                               position_embeddings=position_embeddings)[0]
         for h in handles:
             h.remove()
 
@@ -135,7 +142,8 @@ def prune_wanda_nonuniform(model, tokenizer, sparsity_map,
             with torch.no_grad():
                 outs[j] = layer(inps[j].unsqueeze(0),
                                attention_mask=attention_mask,
-                               position_ids=position_ids)[0]
+                               position_ids=position_ids,
+                               position_embeddings=position_embeddings)[0]
         inps, outs = outs, inps
 
     model.config.use_cache = use_cache
@@ -170,6 +178,12 @@ def prune_wandapp_eap(model, tokenizer, sparsity_map,
         inps, outs, attention_mask, position_ids = prepare_calibration_input(
             model, dataloader, device)
 
+    position_embeddings = None
+    if hasattr(model.model, 'rotary_emb'):
+        with torch.no_grad():
+            pos_ids = torch.arange(model.seqlen, device=inps.device).unsqueeze(0)
+            position_embeddings = model.model.rotary_emb(inps[:1], pos_ids)
+
     layers = model.model.layers
     for i in range(len(layers)):
         layer = layers[i]
@@ -198,7 +212,8 @@ def prune_wandapp_eap(model, tokenizer, sparsity_map,
             with torch.no_grad():
                 outs[j] = layer(inps[j].unsqueeze(0),
                                attention_mask=attention_mask,
-                               position_ids=position_ids)[0]
+                               position_ids=position_ids,
+                               position_embeddings=position_embeddings)[0]
         for h in handles:
             h.remove()
 
@@ -234,7 +249,8 @@ def prune_wandapp_eap(model, tokenizer, sparsity_map,
             with torch.no_grad():
                 outs[j] = layer(inps[j].unsqueeze(0),
                                attention_mask=attention_mask,
-                               position_ids=position_ids)[0]
+                               position_ids=position_ids,
+                               position_embeddings=position_embeddings)[0]
         inps, outs = outs, inps
 
     model.config.use_cache = use_cache
@@ -267,6 +283,12 @@ def prune_with_protection(model, tokenizer, sparsity_map,
         inps, outs, attention_mask, position_ids = prepare_calibration_input(
             model, dataloader, device)
 
+    position_embeddings = None
+    if hasattr(model.model, 'rotary_emb'):
+        with torch.no_grad():
+            pos_ids = torch.arange(model.seqlen, device=inps.device).unsqueeze(0)
+            position_embeddings = model.model.rotary_emb(inps[:1], pos_ids)
+
     layers = model.model.layers
     for i in range(len(layers)):
         layer = layers[i]
@@ -295,7 +317,8 @@ def prune_with_protection(model, tokenizer, sparsity_map,
             with torch.no_grad():
                 outs[j] = layer(inps[j].unsqueeze(0),
                                attention_mask=attention_mask,
-                               position_ids=position_ids)[0]
+                               position_ids=position_ids,
+                               position_embeddings=position_embeddings)[0]
         for h in handles:
             h.remove()
 
@@ -334,7 +357,8 @@ def prune_with_protection(model, tokenizer, sparsity_map,
             with torch.no_grad():
                 outs[j] = layer(inps[j].unsqueeze(0),
                                attention_mask=attention_mask,
-                               position_ids=position_ids)[0]
+                               position_ids=position_ids,
+                               position_embeddings=position_embeddings)[0]
         inps, outs = outs, inps
 
     model.config.use_cache = use_cache

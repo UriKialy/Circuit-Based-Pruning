@@ -30,7 +30,7 @@ from utils import load_model, load_tokenizer, check_sparsity, free_memory, \
     load_scores, save_scores, print_gpu_memory
 from evaluation import eval_perplexity_wikitext2
 from sparsity import allocate_layer_sparsity, uniform_sparsity, print_allocation
-from pruning import prune_model
+from pruning import prune_wanda_nonuniform
 from attribution_nodes import relp_to_layer_importance, relp_to_matrix_importance
 
 
@@ -84,9 +84,8 @@ def run_one(layer_importance, target_sparsity, temperature, args,
         from regional_optimizer import regional_optimize
         ro_fn = regional_optimize
 
-    prune_model(
+    prune_wanda_nonuniform(
         model, tokenizer, sp_map,
-        scoring_method="wanda",
         nsamples=args.nsamples,
         device=device,
         use_ro=args.use_ro,
