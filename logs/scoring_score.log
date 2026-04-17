@@ -1,4 +1,0 @@
-Traceback (most recent call last):
-  File "/workspace/Circuit-Based-Pruning/run_scoring_comparison.py", line 35, in <module>
-    from scipy import stats as scipy_stats
-ModuleNotFoundError: No module named 'scipy'

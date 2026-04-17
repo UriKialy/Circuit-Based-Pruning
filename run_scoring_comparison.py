@@ -192,7 +192,12 @@ def load_tl_model():
         center_writing_weights=False,
         center_unembed=False,
         fold_ln=False,
+        use_attn_result=True,
     )
+    tl_model.cfg.use_attn_result = True
+    tl_model.cfg.use_split_qkv_input = True
+    tl_model.cfg.use_hook_mlp_in = True
+    tl_model.cfg.use_attn_in = True
     tl_model.set_tokenizer(AutoTokenizer.from_pretrained(MODEL_NAME))
     del hf_model
     free_memory()
