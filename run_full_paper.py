@@ -198,7 +198,7 @@ def full_sweep(layer_importance, best_temp, args):
             del model
             free_memory()
         else:
-            ppl, _ = run_one(layer_importance, target, best_temp, args, verbose=(pct == 50))
+            ppl, _ = run_one(layer_importance, target, best_temp_map.get(pct, best_temp), args, verbose=(pct == 50))
         results[pct] = ppl
         print(f"  {pct}% → PPL = {ppl:.2f}")
 
@@ -220,7 +220,7 @@ def ablation_ushape(layer_importance, best_temp, args):
     print(f"  {'-'*42}")
 
     results = {"uniform": {}, "u_shaped": {}, "circuit": {}}
-    for pct in [30, 50, 70]:
+    for pct in [50, 70]:
         target = pct / 100.0
 
         # Uniform
@@ -228,11 +228,11 @@ def ablation_ushape(layer_importance, best_temp, args):
         results["uniform"][pct] = ppl_u
 
         # U-shaped
-        ppl_ush, _ = run_one(u_importance, target, best_temp, args)
+        ppl_ush, _ = run_one(u_importance, target, best_temp_map.get(pct, best_temp), args)
         results["u_shaped"][pct] = ppl_ush
 
         # Circuit
-        ppl_c, _ = run_one(layer_importance, target, best_temp, args)
+        ppl_c, _ = run_one(layer_importance, target, best_temp_map.get(pct, best_temp), args)
         results["circuit"][pct] = ppl_c
 
         best = min(ppl_u, ppl_ush, ppl_c)
@@ -261,11 +261,11 @@ def ablation_protect(layer_importance, best_temp, args):
         ppl_u, _ = run_one(layer_importance, target, 1e6, args)
         results["uniform"][pct] = ppl_u
 
-        ppl_p, _ = run_one(layer_importance, target, best_temp, args,
+        ppl_p, _ = run_one(layer_importance, target, best_temp_map.get(pct, best_temp), args,
                            protect_layers=[0, N_LAYERS - 1])
         results["protected"][pct] = ppl_p
 
-        ppl_np, _ = run_one(layer_importance, target, best_temp, args)
+        ppl_np, _ = run_one(layer_importance, target, best_temp_map.get(pct, best_temp), args)
         results["unprotected"][pct] = ppl_np
 
         print(f"  {pct}%{'':<6} {ppl_p:>12.2f} {ppl_np:>13.2f} {ppl_u:>10.2f}")
@@ -288,14 +288,14 @@ def ablation_shuffle(layer_importance, best_temp, args, n_shuffles=5):
         shuf_imp = make_shuffled_importance(layer_importance, seed * 42)
         for pct in [50, 70]:
             target = pct / 100.0
-            ppl, _ = run_one(shuf_imp, target, best_temp, args)
+            ppl, _ = run_one(shuf_imp, target, best_temp_map.get(pct, best_temp), args)
             results_by_sparsity[pct].append(ppl)
             print(f"  Shuffle {seed}, {pct}% → PPL = {ppl:.2f}")
 
     # Circuit scores for comparison
     circuit_results = {}
     for pct in [50, 70]:
-        ppl, _ = run_one(layer_importance, pct / 100.0, best_temp, args)
+        ppl, _ = run_one(layer_importance, pct / 100.0, best_temp_map.get(pct, best_temp), args)
         circuit_results[pct] = ppl
 
     print(f"\n  {'Sparsity':<10} {'Shuffled (mean±std)':>22} {'Circuit':>10}")
@@ -328,7 +328,7 @@ def crossover(layer_importance, best_temp, args):
         target = pct / 100.0
 
         ppl_u, _ = run_one(layer_importance, target, 1e6, args)
-        ppl_c, _ = run_one(layer_importance, target, best_temp, args)
+        ppl_c, _ = run_one(layer_importance, target, best_temp_map.get(pct, best_temp), args)
 
         results["uniform"][pct] = ppl_u
         results["circuit"][pct] = ppl_c
@@ -369,13 +369,11 @@ if __name__ == "__main__":
     if args.only is None or args.only == "temp_sweep":
         res = temp_sweep(layer_importance, args)
         all_results["temp_sweep"] = res
-        # Find global best T
-        best_temp = 5.0  # default
-        if 50 in res:
-            best_temp = min(res[50], key=res[50].get)
-        print(f"\n  Using best T = {best_temp} for remaining experiments")
-    else:
-        best_temp = 5.0
+
+    # Per-sparsity best temperature (from sweep results)
+    best_temp_map = {30: 10.0, 50: 10.0, 70: 3.0}
+    print(f"\n  Using per-sparsity T: {best_temp_map}")
+    best_temp = 3.0  # fallback default
 
     # ── Full sweep ──
     if args.only is None or args.only == "full_sweep":

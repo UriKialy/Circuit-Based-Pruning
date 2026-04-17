@@ -1,0 +1,850 @@
+Loading RelP scores from ./scores/relp_nodes_pile10k_s128.pkl...
+Loaded scores from ./scores/relp_nodes_pile10k_s128.pkl
+Layer importance scores for 32 layers loaded.
+  Layer  0: 1435.6760
+  Layer  1: 842.8517
+  Layer 16: 100.9642
+  Layer 30: 158.5177
+  Layer 31: 217.8925
+
+  Using per-sparsity T: {30: 10.0, 50: 10.0, 70: 3.0}
+
+============================================================
+  CROSSOVER SWEEP — uniform vs layer-only T=3.0
+============================================================
+  Sparsity      Uniform    Circuit      Delta     Winner
+  ----------------------------------------------------
+Loading checkpoint shards:   0%|                                                                                                                                | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|████████████████████████████████████████████████████████████                                                            | 1/2 [00:01<00:01,  1.14s/it]Loading checkpoint shards: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:01<00:00,  1.43it/s]Loading checkpoint shards: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:01<00:00,  1.31it/s]
+You are using the default legacy behaviour of the <class 'transformers.models.llama.tokenization_llama_fast.LlamaTokenizerFast'>. This is expected, and simply means that the `legacy` (previous) behavior will be used so nothing changes for you. If you want to use the new behaviour, set `legacy=False`. This should only be set if you understand what it means, and thoroughly read the reason why this was added as explained in https://github.com/huggingface/transformers/pull/24565 - if you loaded a llama tokenizer from a GGUF file you can ignore this message.
+Token indices sequence length is longer than the specified maximum sequence length for this model (4684 > 2048). Running this sequence through the model will result in indexing errors
+loading calibration data
+dataset loading complete
+layer 0 sparsity 0.249790
+layer 1 sparsity 0.249790
+layer 2 sparsity 0.249790
+layer 3 sparsity 0.250000
+layer 4 sparsity 0.250000
+layer 5 sparsity 0.250000
+layer 6 sparsity 0.250000
+layer 7 sparsity 0.250000
+layer 8 sparsity 0.250000
+layer 9 sparsity 0.250000
+layer 10 sparsity 0.250000
+layer 11 sparsity 0.250000
+layer 12 sparsity 0.250000
+layer 13 sparsity 0.250000
+layer 14 sparsity 0.250000
+layer 15 sparsity 0.250000
+layer 16 sparsity 0.250000
+layer 17 sparsity 0.250000
+layer 18 sparsity 0.250000
+layer 19 sparsity 0.250000
+layer 20 sparsity 0.250000
+layer 21 sparsity 0.250000
+layer 22 sparsity 0.250000
+layer 23 sparsity 0.250000
+layer 24 sparsity 0.250000
+layer 25 sparsity 0.250000
+layer 26 sparsity 0.250000
+layer 27 sparsity 0.250000
+layer 28 sparsity 0.250000
+layer 29 sparsity 0.250000
+layer 30 sparsity 0.250000
+layer 31 sparsity 0.249790
+nsamples 166
+sample 0
+sample 50
+sample 100
+sample 150
+Loading checkpoint shards:   0%|                                                                                                                                | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|████████████████████████████████████████████████████████████                                                            | 1/2 [00:01<00:01,  1.45s/it]Loading checkpoint shards: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:01<00:00,  1.21it/s]Loading checkpoint shards: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:01<00:00,  1.09it/s]
+Token indices sequence length is longer than the specified maximum sequence length for this model (4684 > 2048). Running this sequence through the model will result in indexing errors
+loading calibration data
+dataset loading complete
+layer 0 sparsity 0.186078
+layer 1 sparsity 0.213632
+layer 2 sparsity 0.244882
+layer 3 sparsity 0.254888
+layer 4 sparsity 0.253216
+layer 5 sparsity 0.254407
+layer 6 sparsity 0.254908
+layer 7 sparsity 0.254888
+layer 8 sparsity 0.254387
+layer 9 sparsity 0.254888
+layer 10 sparsity 0.254908
+layer 11 sparsity 0.254908
+layer 12 sparsity 0.254908
+layer 13 sparsity 0.254427
+layer 14 sparsity 0.254658
+layer 15 sparsity 0.254427
+layer 16 sparsity 0.253696
+layer 17 sparsity 0.253216
+layer 18 sparsity 0.253656
+layer 19 sparsity 0.253426
+layer 20 sparsity 0.252925
+layer 21 sparsity 0.253446
+layer 22 sparsity 0.253195
+layer 23 sparsity 0.253446
+layer 24 sparsity 0.253926
+layer 25 sparsity 0.253676
+layer 26 sparsity 0.253426
+layer 27 sparsity 0.252965
+layer 28 sparsity 0.251232
+layer 29 sparsity 0.252464
+layer 30 sparsity 0.250481
+layer 31 sparsity 0.247075
+nsamples 166
+sample 0
+sample 50
+sample 100
+sample 150
+  25%             5.90       5.90      -0.00        Tie
+Loading checkpoint shards:   0%|                                                                                                                                | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|████████████████████████████████████████████████████████████                                                            | 1/2 [00:01<00:01,  1.44s/it]Loading checkpoint shards: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:01<00:00,  1.22it/s]Loading checkpoint shards: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:01<00:00,  1.09it/s]
+Token indices sequence length is longer than the specified maximum sequence length for this model (4684 > 2048). Running this sequence through the model will result in indexing errors
+loading calibration data
+dataset loading complete
+layer 0 sparsity 0.299840
+layer 1 sparsity 0.299840
+layer 2 sparsity 0.299840
+layer 3 sparsity 0.299840
+layer 4 sparsity 0.299840
+layer 5 sparsity 0.299840
+layer 6 sparsity 0.299840
+layer 7 sparsity 0.299840
+layer 8 sparsity 0.299840
+layer 9 sparsity 0.299840
+layer 10 sparsity 0.299840
+layer 11 sparsity 0.299840
+layer 12 sparsity 0.299840
+layer 13 sparsity 0.299840
+layer 14 sparsity 0.299840
+layer 15 sparsity 0.299840
+layer 16 sparsity 0.299840
+layer 17 sparsity 0.299840
+layer 18 sparsity 0.299840
+layer 19 sparsity 0.299840
+layer 20 sparsity 0.299840
+layer 21 sparsity 0.299840
+layer 22 sparsity 0.299840
+layer 23 sparsity 0.299840
+layer 24 sparsity 0.299840
+layer 25 sparsity 0.299840
+layer 26 sparsity 0.299840
+layer 27 sparsity 0.299840
+layer 28 sparsity 0.299840
+layer 29 sparsity 0.299840
+layer 30 sparsity 0.299840
+layer 31 sparsity 0.299840
+nsamples 166
+sample 0
+sample 50
+sample 100
+sample 150
+Loading checkpoint shards:   0%|                                                                                                                                | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|████████████████████████████████████████████████████████████                                                            | 1/2 [00:01<00:01,  1.45s/it]Loading checkpoint shards: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:01<00:00,  1.21it/s]Loading checkpoint shards: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:01<00:00,  1.09it/s]
+Token indices sequence length is longer than the specified maximum sequence length for this model (4684 > 2048). Running this sequence through the model will result in indexing errors
+loading calibration data
+dataset loading complete
+layer 0 sparsity 0.274670
+layer 1 sparsity 0.286158
+layer 2 sparsity 0.298127
+layer 3 sparsity 0.301783
+layer 4 sparsity 0.301262
+layer 5 sparsity 0.301553
+layer 6 sparsity 0.301783
+layer 7 sparsity 0.301783
+layer 8 sparsity 0.301533
+layer 9 sparsity 0.301783
+layer 10 sparsity 0.301783
+layer 11 sparsity 0.301783
+layer 12 sparsity 0.301783
+layer 13 sparsity 0.301553
+layer 14 sparsity 0.301763
+layer 15 sparsity 0.301553
+layer 16 sparsity 0.301302
+layer 17 sparsity 0.301262
+layer 18 sparsity 0.301302
+layer 19 sparsity 0.301282
+layer 20 sparsity 0.301052
+layer 21 sparsity 0.301282
+layer 22 sparsity 0.301262
+layer 23 sparsity 0.301282
+layer 24 sparsity 0.301512
+layer 25 sparsity 0.301302
+layer 26 sparsity 0.301282
+layer 27 sparsity 0.301052
+layer 28 sparsity 0.300531
+layer 29 sparsity 0.301011
+layer 30 sparsity 0.300280
+layer 31 sparsity 0.298879
+nsamples 166
+sample 0
+sample 50
+sample 100
+sample 150
+  30%             6.00       5.99      +0.00        Tie
+Loading checkpoint shards:   0%|                                                                                                                                | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|████████████████████████████████████████████████████████████                                                            | 1/2 [00:01<00:01,  1.45s/it]Loading checkpoint shards: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:01<00:00,  1.18it/s]Loading checkpoint shards: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:01<00:00,  1.07it/s]
+Token indices sequence length is longer than the specified maximum sequence length for this model (4684 > 2048). Running this sequence through the model will result in indexing errors
+loading calibration data
+dataset loading complete
+layer 0 sparsity 0.349870
+layer 1 sparsity 0.349870
+layer 2 sparsity 0.349870
+layer 3 sparsity 0.349870
+layer 4 sparsity 0.349870
+layer 5 sparsity 0.349870
+layer 6 sparsity 0.349870
+layer 7 sparsity 0.349870
+layer 8 sparsity 0.349870
+layer 9 sparsity 0.349870
+layer 10 sparsity 0.349870
+layer 11 sparsity 0.349870
+layer 12 sparsity 0.349870
+layer 13 sparsity 0.349870
+layer 14 sparsity 0.349870
+layer 15 sparsity 0.349870
+layer 16 sparsity 0.349870
+layer 17 sparsity 0.349870
+layer 18 sparsity 0.349870
+layer 19 sparsity 0.349870
+layer 20 sparsity 0.349870
+layer 21 sparsity 0.349870
+layer 22 sparsity 0.349870
+layer 23 sparsity 0.349870
+layer 24 sparsity 0.349870
+layer 25 sparsity 0.349870
+layer 26 sparsity 0.349870
+layer 27 sparsity 0.349870
+layer 28 sparsity 0.349870
+layer 29 sparsity 0.349870
+layer 30 sparsity 0.349870
+layer 31 sparsity 0.349870
+nsamples 166
+sample 0
+sample 50
+sample 100
+sample 150
+Loading checkpoint shards:   0%|                                                                                                                                | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|████████████████████████████████████████████████████████████                                                            | 1/2 [00:01<00:01,  1.40s/it]Loading checkpoint shards: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:01<00:00,  1.24it/s]Loading checkpoint shards: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:01<00:00,  1.12it/s]
+Token indices sequence length is longer than the specified maximum sequence length for this model (4684 > 2048). Running this sequence through the model will result in indexing errors
+loading calibration data
+dataset loading complete
+layer 0 sparsity 0.260737
+layer 1 sparsity 0.299089
+layer 2 sparsity 0.342789
+layer 3 sparsity 0.356721
+layer 4 sparsity 0.354717
+layer 5 sparsity 0.356220
+layer 6 sparsity 0.356972
+layer 7 sparsity 0.356931
+layer 8 sparsity 0.355990
+layer 9 sparsity 0.356721
+layer 10 sparsity 0.356951
+layer 11 sparsity 0.356951
+layer 12 sparsity 0.356951
+layer 13 sparsity 0.356220
+layer 14 sparsity 0.356681
+layer 15 sparsity 0.356220
+layer 16 sparsity 0.355259
+layer 17 sparsity 0.354738
+layer 18 sparsity 0.355008
+layer 19 sparsity 0.354758
+layer 20 sparsity 0.354027
+layer 21 sparsity 0.354988
+layer 22 sparsity 0.354528
+layer 23 sparsity 0.354988
+layer 24 sparsity 0.355489
+layer 25 sparsity 0.355239
+layer 26 sparsity 0.354758
+layer 27 sparsity 0.354257
+layer 28 sparsity 0.351603
+layer 29 sparsity 0.353526
+layer 30 sparsity 0.350621
+layer 31 sparsity 0.345754
+nsamples 166
+sample 0
+sample 50
+sample 100
+sample 150
+  35%             6.13       6.15      -0.01        Tie
+Loading checkpoint shards:   0%|                                                                                                                                | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|████████████████████████████████████████████████████████████                                                            | 1/2 [00:01<00:01,  1.45s/it]Loading checkpoint shards: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:01<00:00,  1.20it/s]Loading checkpoint shards: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:01<00:00,  1.08it/s]
+Token indices sequence length is longer than the specified maximum sequence length for this model (4684 > 2048). Running this sequence through the model will result in indexing errors
+loading calibration data
+dataset loading complete
+layer 0 sparsity 0.399920
+layer 1 sparsity 0.399920
+layer 2 sparsity 0.399920
+layer 3 sparsity 0.399920
+layer 4 sparsity 0.399920
+layer 5 sparsity 0.399920
+layer 6 sparsity 0.399920
+layer 7 sparsity 0.399920
+layer 8 sparsity 0.399920
+layer 9 sparsity 0.399920
+layer 10 sparsity 0.399920
+layer 11 sparsity 0.399920
+layer 12 sparsity 0.399920
+layer 13 sparsity 0.399920
+layer 14 sparsity 0.399920
+layer 15 sparsity 0.399920
+layer 16 sparsity 0.399920
+layer 17 sparsity 0.399920
+layer 18 sparsity 0.399920
+layer 19 sparsity 0.399920
+layer 20 sparsity 0.399920
+layer 21 sparsity 0.399920
+layer 22 sparsity 0.399920
+layer 23 sparsity 0.399920
+layer 24 sparsity 0.399920
+layer 25 sparsity 0.399920
+layer 26 sparsity 0.399920
+layer 27 sparsity 0.399920
+layer 28 sparsity 0.399920
+layer 29 sparsity 0.399920
+layer 30 sparsity 0.399920
+layer 31 sparsity 0.399920
+nsamples 166
+sample 0
+sample 50
+sample 100
+sample 150
+Loading checkpoint shards:   0%|                                                                                                                                | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|████████████████████████████████████████████████████████████                                                            | 1/2 [00:01<00:01,  1.44s/it]Loading checkpoint shards: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:01<00:00,  1.21it/s]Loading checkpoint shards: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:01<00:00,  1.09it/s]
+Token indices sequence length is longer than the specified maximum sequence length for this model (4684 > 2048). Running this sequence through the model will result in indexing errors
+loading calibration data
+dataset loading complete
+layer 0 sparsity 0.297877
+layer 1 sparsity 0.341827
+layer 2 sparsity 0.391837
+layer 3 sparsity 0.407753
+layer 4 sparsity 0.405289
+layer 5 sparsity 0.407211
+layer 6 sparsity 0.407983
+layer 7 sparsity 0.407943
+layer 8 sparsity 0.406981
+layer 9 sparsity 0.407753
+layer 10 sparsity 0.407983
+layer 11 sparsity 0.407963
+layer 12 sparsity 0.407963
+layer 13 sparsity 0.407232
+layer 14 sparsity 0.407502
+layer 15 sparsity 0.407232
+layer 16 sparsity 0.406040
+layer 17 sparsity 0.405289
+layer 18 sparsity 0.405769
+layer 19 sparsity 0.405519
+layer 20 sparsity 0.404578
+layer 21 sparsity 0.405749
+layer 22 sparsity 0.405289
+layer 23 sparsity 0.405749
+layer 24 sparsity 0.406270
+layer 25 sparsity 0.406020
+layer 26 sparsity 0.405519
+layer 27 sparsity 0.404808
+layer 28 sparsity 0.401883
+layer 29 sparsity 0.404057
+layer 30 sparsity 0.400671
+layer 31 sparsity 0.395283
+nsamples 166
+sample 0
+sample 50
+sample 100
+sample 150
+  40%             6.39       6.41      -0.02        Tie
+Loading checkpoint shards:   0%|                                                                                                                                | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|████████████████████████████████████████████████████████████                                                            | 1/2 [00:01<00:01,  1.46s/it]Loading checkpoint shards: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:01<00:00,  1.20it/s]Loading checkpoint shards: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:01<00:00,  1.08it/s]
+Token indices sequence length is longer than the specified maximum sequence length for this model (4684 > 2048). Running this sequence through the model will result in indexing errors
+loading calibration data
+dataset loading complete
+layer 0 sparsity 0.449950
+layer 1 sparsity 0.449950
+layer 2 sparsity 0.449950
+layer 3 sparsity 0.449950
+layer 4 sparsity 0.449950
+layer 5 sparsity 0.449950
+layer 6 sparsity 0.449950
+layer 7 sparsity 0.449950
+layer 8 sparsity 0.449950
+layer 9 sparsity 0.449950
+layer 10 sparsity 0.449950
+layer 11 sparsity 0.449950
+layer 12 sparsity 0.449950
+layer 13 sparsity 0.449950
+layer 14 sparsity 0.449950
+layer 15 sparsity 0.449950
+layer 16 sparsity 0.449950
+layer 17 sparsity 0.449950
+layer 18 sparsity 0.449950
+layer 19 sparsity 0.449950
+layer 20 sparsity 0.449950
+layer 21 sparsity 0.449950
+layer 22 sparsity 0.449950
+layer 23 sparsity 0.449950
+layer 24 sparsity 0.449950
+layer 25 sparsity 0.449950
+layer 26 sparsity 0.449950
+layer 27 sparsity 0.449950
+layer 28 sparsity 0.449950
+layer 29 sparsity 0.449950
+layer 30 sparsity 0.449950
+layer 31 sparsity 0.449950
+nsamples 166
+sample 0
+sample 50
+sample 100
+sample 150
+Loading checkpoint shards:   0%|                                                                                                                                | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|████████████████████████████████████████████████████████████                                                            | 1/2 [00:01<00:01,  1.44s/it]Loading checkpoint shards: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:01<00:00,  1.22it/s]Loading checkpoint shards: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:01<00:00,  1.09it/s]
+Token indices sequence length is longer than the specified maximum sequence length for this model (4684 > 2048). Running this sequence through the model will result in indexing errors
+loading calibration data
+dataset loading complete
+layer 0 sparsity 0.335206
+layer 1 sparsity 0.384546
+layer 2 sparsity 0.440695
+layer 3 sparsity 0.458764
+layer 4 sparsity 0.456050
+layer 5 sparsity 0.458033
+layer 6 sparsity 0.459015
+layer 7 sparsity 0.458785
+layer 8 sparsity 0.457783
+layer 9 sparsity 0.458764
+layer 10 sparsity 0.458994
+layer 11 sparsity 0.458974
+layer 12 sparsity 0.458994
+layer 13 sparsity 0.458033
+layer 14 sparsity 0.458514
+layer 15 sparsity 0.458033
+layer 16 sparsity 0.456821
+layer 17 sparsity 0.456050
+layer 18 sparsity 0.456551
+layer 19 sparsity 0.456090
+layer 20 sparsity 0.455318
+layer 21 sparsity 0.456341
+layer 22 sparsity 0.455860
+layer 23 sparsity 0.456341
+layer 24 sparsity 0.457051
+layer 25 sparsity 0.456801
+layer 26 sparsity 0.456090
+layer 27 sparsity 0.455569
+layer 28 sparsity 0.452184
+layer 29 sparsity 0.454587
+layer 30 sparsity 0.450932
+layer 31 sparsity 0.444622
+nsamples 166
+sample 0
+sample 50
+sample 100
+sample 150
+  45%             6.74       6.78      -0.04        Tie
+Loading checkpoint shards:   0%|                                                                                                                                | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|████████████████████████████████████████████████████████████                                                            | 1/2 [00:01<00:01,  1.46s/it]Loading checkpoint shards: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:01<00:00,  1.19it/s]Loading checkpoint shards: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:01<00:00,  1.07it/s]
+Token indices sequence length is longer than the specified maximum sequence length for this model (4684 > 2048). Running this sequence through the model will result in indexing errors
+loading calibration data
+dataset loading complete
+layer 0 sparsity 0.499790
+layer 1 sparsity 0.499790
+layer 2 sparsity 0.499790
+layer 3 sparsity 0.500000
+layer 4 sparsity 0.500000
+layer 5 sparsity 0.500000
+layer 6 sparsity 0.500000
+layer 7 sparsity 0.500000
+layer 8 sparsity 0.500000
+layer 9 sparsity 0.500000
+layer 10 sparsity 0.500000
+layer 11 sparsity 0.500000
+layer 12 sparsity 0.500000
+layer 13 sparsity 0.500000
+layer 14 sparsity 0.500000
+layer 15 sparsity 0.500000
+layer 16 sparsity 0.500000
+layer 17 sparsity 0.500000
+layer 18 sparsity 0.500000
+layer 19 sparsity 0.500000
+layer 20 sparsity 0.500000
+layer 21 sparsity 0.500000
+layer 22 sparsity 0.500000
+layer 23 sparsity 0.500000
+layer 24 sparsity 0.500000
+layer 25 sparsity 0.500000
+layer 26 sparsity 0.500000
+layer 27 sparsity 0.500000
+layer 28 sparsity 0.500000
+layer 29 sparsity 0.500000
+layer 30 sparsity 0.500000
+layer 31 sparsity 0.499790
+nsamples 166
+sample 0
+sample 50
+sample 100
+sample 150
+Loading checkpoint shards:   0%|                                                                                                                                | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|████████████████████████████████████████████████████████████                                                            | 1/2 [00:01<00:01,  1.45s/it]Loading checkpoint shards: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:01<00:00,  1.21it/s]Loading checkpoint shards: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:01<00:00,  1.08it/s]
+Token indices sequence length is longer than the specified maximum sequence length for this model (4684 > 2048). Running this sequence through the model will result in indexing errors
+loading calibration data
+dataset loading complete
+layer 0 sparsity 0.457783
+layer 1 sparsity 0.477063
+layer 2 sparsity 0.497075
+layer 3 sparsity 0.502965
+layer 4 sparsity 0.502193
+layer 5 sparsity 0.502715
+layer 6 sparsity 0.503175
+layer 7 sparsity 0.502965
+layer 8 sparsity 0.502694
+layer 9 sparsity 0.502965
+layer 10 sparsity 0.503175
+layer 11 sparsity 0.502965
+layer 12 sparsity 0.502965
+layer 13 sparsity 0.502715
+layer 14 sparsity 0.502945
+layer 15 sparsity 0.502715
+layer 16 sparsity 0.502444
+layer 17 sparsity 0.502193
+layer 18 sparsity 0.502234
+layer 19 sparsity 0.502193
+layer 20 sparsity 0.501943
+layer 21 sparsity 0.502214
+layer 22 sparsity 0.502004
+layer 23 sparsity 0.502214
+layer 24 sparsity 0.502464
+layer 25 sparsity 0.502424
+layer 26 sparsity 0.502193
+layer 27 sparsity 0.501963
+layer 28 sparsity 0.500772
+layer 29 sparsity 0.501693
+layer 30 sparsity 0.500481
+layer 31 sparsity 0.498307
+nsamples 166
+sample 0
+sample 50
+sample 100
+sample 150
+  50%             7.24       7.26      -0.01        Tie
+Loading checkpoint shards:   0%|                                                                                                                                | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|████████████████████████████████████████████████████████████                                                            | 1/2 [00:01<00:01,  1.46s/it]Loading checkpoint shards: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:01<00:00,  1.20it/s]Loading checkpoint shards: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:01<00:00,  1.08it/s]
+Token indices sequence length is longer than the specified maximum sequence length for this model (4684 > 2048). Running this sequence through the model will result in indexing errors
+loading calibration data
+dataset loading complete
+layer 0 sparsity 0.549840
+layer 1 sparsity 0.549840
+layer 2 sparsity 0.549840
+layer 3 sparsity 0.549840
+layer 4 sparsity 0.549840
+layer 5 sparsity 0.549840
+layer 6 sparsity 0.549840
+layer 7 sparsity 0.549840
+layer 8 sparsity 0.549840
+layer 9 sparsity 0.549840
+layer 10 sparsity 0.549840
+layer 11 sparsity 0.549840
+layer 12 sparsity 0.549840
+layer 13 sparsity 0.549840
+layer 14 sparsity 0.549840
+layer 15 sparsity 0.549840
+layer 16 sparsity 0.549840
+layer 17 sparsity 0.549840
+layer 18 sparsity 0.549840
+layer 19 sparsity 0.549840
+layer 20 sparsity 0.549840
+layer 21 sparsity 0.549840
+layer 22 sparsity 0.549840
+layer 23 sparsity 0.549840
+layer 24 sparsity 0.549840
+layer 25 sparsity 0.549840
+layer 26 sparsity 0.549840
+layer 27 sparsity 0.549840
+layer 28 sparsity 0.549840
+layer 29 sparsity 0.549840
+layer 30 sparsity 0.549840
+layer 31 sparsity 0.549840
+nsamples 166
+sample 0
+sample 50
+sample 100
+sample 150
+Loading checkpoint shards:   0%|                                                                                                                                | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|████████████████████████████████████████████████████████████                                                            | 1/2 [00:01<00:01,  1.45s/it]Loading checkpoint shards: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:01<00:00,  1.20it/s]Loading checkpoint shards: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:01<00:00,  1.08it/s]
+Token indices sequence length is longer than the specified maximum sequence length for this model (4684 > 2048). Running this sequence through the model will result in indexing errors
+loading calibration data
+dataset loading complete
+layer 0 sparsity 0.409676
+layer 1 sparsity 0.470002
+layer 2 sparsity 0.538812
+layer 3 sparsity 0.560787
+layer 4 sparsity 0.557382
+layer 5 sparsity 0.559826
+layer 6 sparsity 0.561058
+layer 7 sparsity 0.560807
+layer 8 sparsity 0.559596
+layer 9 sparsity 0.560807
+layer 10 sparsity 0.561038
+layer 11 sparsity 0.560828
+layer 12 sparsity 0.561017
+layer 13 sparsity 0.559846
+layer 14 sparsity 0.560347
+layer 15 sparsity 0.559846
+layer 16 sparsity 0.558384
+layer 17 sparsity 0.557382
+layer 18 sparsity 0.557903
+layer 19 sparsity 0.557612
+layer 20 sparsity 0.556421
+layer 21 sparsity 0.557863
+layer 22 sparsity 0.557362
+layer 23 sparsity 0.557863
+layer 24 sparsity 0.558634
+layer 25 sparsity 0.558343
+layer 26 sparsity 0.557612
+layer 27 sparsity 0.556671
+layer 28 sparsity 0.552744
+layer 29 sparsity 0.555649
+layer 30 sparsity 0.551052
+layer 31 sparsity 0.543490
+nsamples 166
+sample 0
+sample 50
+sample 100
+sample 150
+  55%             8.29       8.35      -0.06    Uniform
+Loading checkpoint shards:   0%|                                                                                                                                | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|████████████████████████████████████████████████████████████                                                            | 1/2 [00:01<00:01,  1.42s/it]Loading checkpoint shards: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:01<00:00,  1.23it/s]Loading checkpoint shards: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:01<00:00,  1.11it/s]
+Token indices sequence length is longer than the specified maximum sequence length for this model (4684 > 2048). Running this sequence through the model will result in indexing errors
+loading calibration data
+dataset loading complete
+layer 0 sparsity 0.599870
+layer 1 sparsity 0.599870
+layer 2 sparsity 0.599870
+layer 3 sparsity 0.599870
+layer 4 sparsity 0.599870
+layer 5 sparsity 0.599870
+layer 6 sparsity 0.599870
+layer 7 sparsity 0.599870
+layer 8 sparsity 0.599870
+layer 9 sparsity 0.599870
+layer 10 sparsity 0.599870
+layer 11 sparsity 0.599870
+layer 12 sparsity 0.599870
+layer 13 sparsity 0.599870
+layer 14 sparsity 0.599870
+layer 15 sparsity 0.599870
+layer 16 sparsity 0.599870
+layer 17 sparsity 0.599870
+layer 18 sparsity 0.599870
+layer 19 sparsity 0.599870
+layer 20 sparsity 0.599870
+layer 21 sparsity 0.599870
+layer 22 sparsity 0.599870
+layer 23 sparsity 0.599870
+layer 24 sparsity 0.599870
+layer 25 sparsity 0.599870
+layer 26 sparsity 0.599870
+layer 27 sparsity 0.599870
+layer 28 sparsity 0.599870
+layer 29 sparsity 0.599870
+layer 30 sparsity 0.599870
+layer 31 sparsity 0.599870
+nsamples 166
+sample 0
+sample 50
+sample 100
+sample 150
+Loading checkpoint shards:   0%|                                                                                                                                | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|████████████████████████████████████████████████████████████                                                            | 1/2 [00:01<00:01,  1.45s/it]Loading checkpoint shards: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:01<00:00,  1.21it/s]Loading checkpoint shards: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:01<00:00,  1.08it/s]
+Token indices sequence length is longer than the specified maximum sequence length for this model (4684 > 2048). Running this sequence through the model will result in indexing errors
+loading calibration data
+dataset loading complete
+layer 0 sparsity 0.446815
+layer 1 sparsity 0.512931
+layer 2 sparsity 0.587671
+layer 3 sparsity 0.611819
+layer 4 sparsity 0.607953
+layer 5 sparsity 0.610837
+layer 6 sparsity 0.612069
+layer 7 sparsity 0.611839
+layer 8 sparsity 0.610397
+layer 9 sparsity 0.611819
+layer 10 sparsity 0.612069
+layer 11 sparsity 0.611859
+layer 12 sparsity 0.611859
+layer 13 sparsity 0.610858
+layer 14 sparsity 0.611358
+layer 15 sparsity 0.610837
+layer 16 sparsity 0.609165
+layer 17 sparsity 0.607953
+layer 18 sparsity 0.608664
+layer 19 sparsity 0.608183
+layer 20 sparsity 0.606972
+layer 21 sparsity 0.608644
+layer 22 sparsity 0.607933
+layer 23 sparsity 0.608644
+layer 24 sparsity 0.609415
+layer 25 sparsity 0.609125
+layer 26 sparsity 0.608183
+layer 27 sparsity 0.607412
+layer 28 sparsity 0.603025
+layer 29 sparsity 0.606010
+layer 30 sparsity 0.601102
+layer 31 sparsity 0.593019
+nsamples 166
+sample 0
+sample 50
+sample 100
+sample 150
+  60%            10.73      10.84      -0.11    Uniform
+Loading checkpoint shards:   0%|                                                                                                                                | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|████████████████████████████████████████████████████████████                                                            | 1/2 [00:01<00:01,  1.44s/it]Loading checkpoint shards: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:01<00:00,  1.22it/s]Loading checkpoint shards: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:01<00:00,  1.10it/s]
+Token indices sequence length is longer than the specified maximum sequence length for this model (4684 > 2048). Running this sequence through the model will result in indexing errors
+loading calibration data
+dataset loading complete
+layer 0 sparsity 0.649920
+layer 1 sparsity 0.649920
+layer 2 sparsity 0.649920
+layer 3 sparsity 0.649920
+layer 4 sparsity 0.649920
+layer 5 sparsity 0.649920
+layer 6 sparsity 0.649920
+layer 7 sparsity 0.649920
+layer 8 sparsity 0.649920
+layer 9 sparsity 0.649920
+layer 10 sparsity 0.649920
+layer 11 sparsity 0.649920
+layer 12 sparsity 0.649920
+layer 13 sparsity 0.649920
+layer 14 sparsity 0.649920
+layer 15 sparsity 0.649920
+layer 16 sparsity 0.649920
+layer 17 sparsity 0.649920
+layer 18 sparsity 0.649920
+layer 19 sparsity 0.649920
+layer 20 sparsity 0.649920
+layer 21 sparsity 0.649920
+layer 22 sparsity 0.649920
+layer 23 sparsity 0.649920
+layer 24 sparsity 0.649920
+layer 25 sparsity 0.649920
+layer 26 sparsity 0.649920
+layer 27 sparsity 0.649920
+layer 28 sparsity 0.649920
+layer 29 sparsity 0.649920
+layer 30 sparsity 0.649920
+layer 31 sparsity 0.649920
+nsamples 166
+sample 0
+sample 50
+sample 100
+sample 150
+Loading checkpoint shards:   0%|                                                                                                                                | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|████████████████████████████████████████████████████████████                                                            | 1/2 [00:01<00:01,  1.44s/it]Loading checkpoint shards: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:01<00:00,  1.21it/s]Loading checkpoint shards: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:01<00:00,  1.09it/s]
+Token indices sequence length is longer than the specified maximum sequence length for this model (4684 > 2048). Running this sequence through the model will result in indexing errors
+loading calibration data
+dataset loading complete
+layer 0 sparsity 0.484145
+layer 1 sparsity 0.555669
+layer 2 sparsity 0.636719
+layer 3 sparsity 0.662641
+layer 4 sparsity 0.658714
+layer 5 sparsity 0.661639
+layer 6 sparsity 0.663101
+layer 7 sparsity 0.662851
+layer 8 sparsity 0.661388
+layer 9 sparsity 0.662830
+layer 10 sparsity 0.663081
+layer 11 sparsity 0.662871
+layer 12 sparsity 0.662871
+layer 13 sparsity 0.661659
+layer 14 sparsity 0.662370
+layer 15 sparsity 0.661659
+layer 16 sparsity 0.659946
+layer 17 sparsity 0.658714
+layer 18 sparsity 0.659445
+layer 19 sparsity 0.658944
+layer 20 sparsity 0.657712
+layer 21 sparsity 0.659215
+layer 22 sparsity 0.658694
+layer 23 sparsity 0.659215
+layer 24 sparsity 0.660386
+layer 25 sparsity 0.659716
+layer 26 sparsity 0.658944
+layer 27 sparsity 0.657963
+layer 28 sparsity 0.653305
+layer 29 sparsity 0.656541
+layer 30 sparsity 0.651362
+layer 31 sparsity 0.642358
+nsamples 166
+sample 0
+sample 50
+sample 100
+sample 150
+  65%            20.62      20.58      +0.04        Tie
+Loading checkpoint shards:   0%|                                                                                                                                | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|████████████████████████████████████████████████████████████                                                            | 1/2 [00:01<00:01,  1.40s/it]Loading checkpoint shards: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:01<00:00,  1.24it/s]Loading checkpoint shards: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:01<00:00,  1.12it/s]
+Token indices sequence length is longer than the specified maximum sequence length for this model (4684 > 2048). Running this sequence through the model will result in indexing errors
+loading calibration data
+dataset loading complete
+layer 0 sparsity 0.699950
+layer 1 sparsity 0.699950
+layer 2 sparsity 0.699950
+layer 3 sparsity 0.699950
+layer 4 sparsity 0.699950
+layer 5 sparsity 0.699950
+layer 6 sparsity 0.699950
+layer 7 sparsity 0.699950
+layer 8 sparsity 0.699950
+layer 9 sparsity 0.699950
+layer 10 sparsity 0.699950
+layer 11 sparsity 0.699950
+layer 12 sparsity 0.699950
+layer 13 sparsity 0.699950
+layer 14 sparsity 0.699950
+layer 15 sparsity 0.699950
+layer 16 sparsity 0.699950
+layer 17 sparsity 0.699950
+layer 18 sparsity 0.699950
+layer 19 sparsity 0.699950
+layer 20 sparsity 0.699950
+layer 21 sparsity 0.699950
+layer 22 sparsity 0.699950
+layer 23 sparsity 0.699950
+layer 24 sparsity 0.699950
+layer 25 sparsity 0.699950
+layer 26 sparsity 0.699950
+layer 27 sparsity 0.699950
+layer 28 sparsity 0.699950
+layer 29 sparsity 0.699950
+layer 30 sparsity 0.699950
+layer 31 sparsity 0.699950
+nsamples 166
+sample 0
+sample 50
+sample 100
+sample 150
+Loading checkpoint shards:   0%|                                                                                                                                | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|████████████████████████████████████████████████████████████                                                            | 1/2 [00:01<00:01,  1.44s/it]Loading checkpoint shards: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:01<00:00,  1.22it/s]Loading checkpoint shards: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:01<00:00,  1.10it/s]
+Token indices sequence length is longer than the specified maximum sequence length for this model (4684 > 2048). Running this sequence through the model will result in indexing errors
+loading calibration data
+dataset loading complete
+layer 0 sparsity 0.521474
+layer 1 sparsity 0.598387
+layer 2 sparsity 0.685597
+layer 3 sparsity 0.713652
+layer 4 sparsity 0.709455
+layer 5 sparsity 0.712630
+layer 6 sparsity 0.714133
+layer 7 sparsity 0.713882
+layer 8 sparsity 0.712190
+layer 9 sparsity 0.713652
+layer 10 sparsity 0.714113
+layer 11 sparsity 0.713903
+layer 12 sparsity 0.713903
+layer 13 sparsity 0.712650
+layer 14 sparsity 0.713381
+layer 15 sparsity 0.712650
+layer 16 sparsity 0.710728
+layer 17 sparsity 0.709475
+layer 18 sparsity 0.710206
+layer 19 sparsity 0.709516
+layer 20 sparsity 0.708263
+layer 21 sparsity 0.709976
+layer 22 sparsity 0.709265
+layer 23 sparsity 0.709976
+layer 24 sparsity 0.711168
+layer 25 sparsity 0.710497
+layer 26 sparsity 0.709705
+layer 27 sparsity 0.708534
+layer 28 sparsity 0.703416
+layer 29 sparsity 0.707072
+layer 30 sparsity 0.701432
+layer 31 sparsity 0.691697
+nsamples 166
+sample 0
+sample 50
+sample 100
+sample 150
+  70%            89.58      63.83     +25.74    Circuit
+
+All results saved to ./results/full_paper_7b.json
+Done!
