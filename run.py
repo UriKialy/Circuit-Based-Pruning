@@ -123,7 +123,7 @@ def run_experiment_1(args):
 
     # ── Pruning + Eval ──
     print("\n[2/3] Pruning and evaluating...")
-    from pruning import prune_model
+    from pruning import prune_wanda_nonuniform, prune_wandapp_eap, prune_with_protection
     from sparsity import uniform_sparsity
 
     tokenizer = load_tokenizer()
@@ -134,10 +134,9 @@ def run_experiment_1(args):
         model = load_model()
 
         sp_map = uniform_sparsity(model, target)
-        prune_model(
+        prune_wandapp_eap(
             model, tokenizer, sp_map,
-            scoring_method="eap_ig",
-            eap_ig_scores=eap_scores,
+            eap_ig_scores=eap_scores, alpha=500.0,
             nsamples=args.n_cal_samples, device=device,
         )
 
@@ -222,7 +221,7 @@ def run_experiment_2(args):
 
     # ── Pruning + Eval ──
     print("\n[2/3] Non-uniform pruning...")
-    from pruning import prune_model
+    from pruning import prune_wanda_nonuniform, prune_wandapp_eap, prune_with_protection
     from sparsity import allocate_layer_sparsity, print_allocation
 
     tokenizer = load_tokenizer()
@@ -238,9 +237,8 @@ def run_experiment_2(args):
         )
         print_allocation(sp_map, N_LAYERS)
 
-        prune_model(
+        prune_wanda_nonuniform(
             model, tokenizer, sp_map,
-            scoring_method="wanda",
             nsamples=args.n_cal_samples, device=device,
         )
 
@@ -312,7 +310,7 @@ def run_experiment_3(args):
 
     # ── Pruning + Eval (sweep alpha) ──
     print("\n[2/3] Wanda++ EAP-IG pruning...")
-    from pruning import prune_model
+    from pruning import prune_wanda_nonuniform, prune_wandapp_eap, prune_with_protection
     from sparsity import uniform_sparsity
 
     tokenizer = load_tokenizer()
@@ -325,11 +323,9 @@ def run_experiment_3(args):
             model = load_model()
 
             sp_map = uniform_sparsity(model, target)
-            prune_model(
+            prune_wandapp_eap(
                 model, tokenizer, sp_map,
-                scoring_method="wandapp_eap",
-                eap_ig_scores=eap_scores,
-                alpha=alpha_val,
+                eap_ig_scores=eap_scores, alpha=alpha_val,
                 nsamples=args.n_cal_samples, device=device,
             )
 
