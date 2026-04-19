@@ -215,5 +215,32 @@
         "wanda": 54.21
       }
     }
+  },
+  "zeroshot_ours_eapig_50pct": {
+    "method": "EAP-IG alpha=100 + Wanda, uniform 50% unstructured",
+    "tasks": [
+      "BoolQ",
+      "RTE",
+      "HellaSwag",
+      "WinoGrande",
+      "ARC-e",
+      "ARC-c",
+      "OBQA",
+      "WiC",
+      "MRPC"
+    ],
+    "acc": [
+      73.1,
+      61.0,
+      51.7,
+      66.9,
+      71.7,
+      37.1,
+      30.0,
+      50.5,
+      45.1
+    ],
+    "mean_7task": 55.9,
+    "note": "Beats Wanda mean 54.21 by +1.7 points on 7 overlapping tasks"
   }
 }

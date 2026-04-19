@@ -1,0 +1,51 @@
+{
+  "method": "eapig_alpha100.0_50%",
+  "sparsity": 0.5,
+  "ppl": null,
+  "tasks": {
+    "boolq": {
+      "acc": 73.06,
+      "acc_norm": null
+    },
+    "rte": {
+      "acc": 61.01,
+      "acc_norm": null
+    },
+    "hellaswag": {
+      "acc": 51.69,
+      "acc_norm": 69.37
+    },
+    "winogrande": {
+      "acc": 66.93,
+      "acc_norm": null
+    },
+    "arc_easy": {
+      "acc": 71.68,
+      "acc_norm": 66.75
+    },
+    "arc_challenge": {
+      "acc": 37.12,
+      "acc_norm": 40.78
+    },
+    "openbookqa": {
+      "acc": 30.0,
+      "acc_norm": 39.8
+    },
+    "wic": {
+      "acc": 50.47,
+      "acc_norm": null
+    },
+    "mrpc": {
+      "acc": 45.1,
+      "acc_norm": null
+    }
+  },
+  "average_acc": 54.11777777777778,
+  "config": {
+    "method": "eapig",
+    "sparsity": 0.5,
+    "alpha": 100.0,
+    "temperature": null,
+    "num_fewshot": 0
+  }
+}
