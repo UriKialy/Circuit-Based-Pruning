@@ -17,7 +17,7 @@ from corruption import make_tl_embedding_noise_hook
 # ═══════════════════════════════════════════════════════════════
 
 class TextPairDataset(Dataset):
-    def __init__(self, texts, max_words=20):
+    def __init__(self, texts, max_words=10):
         self.texts = [" ".join(t.split()[:max_words]) for t in texts]
     def __len__(self): return len(self.texts)
     def __getitem__(self, idx):
@@ -64,7 +64,7 @@ def patch_tokenize_for_shuffle(eap_module):
     return counter
 
 
-def run_eap_ig_nodes(tl_model, texts, max_words=20, batch_size=1):
+def run_eap_ig_nodes(tl_model, texts, max_words=10, batch_size=1):
     from functools import partial
     from eap.graph import Graph
     from eap.attribute_node import attribute_node

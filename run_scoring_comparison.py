@@ -77,7 +77,7 @@ def load_c4_texts_streaming(num_samples, min_words=20):
 #  EAP-IG node-level scoring (attn heads + MLP as atomic nodes)
 # ═══════════════════════════════════════════════════════════════
 
-def run_eap_ig_nodes_on_texts(tl_model, texts, max_words=20, batch_size=1):
+def run_eap_ig_nodes_on_texts(tl_model, texts, max_words=10, batch_size=1):
     """
     EAP-IG node-level: each node = one attention head or one MLP block.
     Returns raw scores tensor + extracted component dict.
