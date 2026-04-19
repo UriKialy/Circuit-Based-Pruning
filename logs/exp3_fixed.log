@@ -1,0 +1,333 @@
+
+======================================================================
+  EXPERIMENT 3: Wanda++ with EAP-IG (replacing RGS)
+======================================================================
+Reusing cached scores from ./scores/eap_ig_weights_pile10k_l2_s128.pkl
+Loaded scores from ./scores/eap_ig_weights_pile10k_l2_s128.pkl
+
+[2/3] Wanda++ EAP-IG pruning...
+
+── Sparsity: 50%, α=100.0 ──
+Loading weights:   0%|                                                                                                                                        | 0/291 [00:00<?, ?it/s]Loading weights:   4%|█████▋                                                                                                                        | 13/291 [00:00<00:02, 128.59it/s]Loading weights:  11%|█████████████▍                                                                                                                | 31/291 [00:00<00:01, 152.14it/s]Loading weights:  16%|████████████████████▎                                                                                                         | 47/291 [00:00<00:01, 153.54it/s]Loading weights:  22%|███████████████████████████▎                                                                                                  | 63/291 [00:00<00:01, 147.87it/s]Loading weights:  27%|█████████████████████████████████▊                                                                                            | 78/291 [00:00<00:01, 138.42it/s]Loading weights:  33%|█████████████████████████████████████████▌                                                                                    | 96/291 [00:00<00:01, 148.85it/s]Loading weights:  39%|████████████████████████████████████████████████▉                                                                            | 114/291 [00:00<00:01, 154.30it/s]Loading weights:  46%|█████████████████████████████████████████████████████████▉                                                                   | 135/291 [00:00<00:00, 169.52it/s]Loading weights:  54%|███████████████████████████████████████████████████████████████████▍                                                         | 157/291 [00:00<00:00, 174.58it/s]Loading weights:  60%|███████████████████████████████████████████████████████████████████████████▌                                                 | 176/291 [00:01<00:00, 173.27it/s]Loading weights:  68%|████████████████████████████████████████████████████████████████████████████████████▌                                        | 197/291 [00:01<00:00, 182.33it/s]Loading weights:  75%|█████████████████████████████████████████████████████████████████████████████████████████████▋                               | 218/291 [00:01<00:00, 189.12it/s]Loading weights:  81%|█████████████████████████████████████████████████████████████████████████████████████████████████████▊                       | 237/291 [00:01<00:00, 178.13it/s]Loading weights:  88%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████▌               | 255/291 [00:01<00:00, 167.35it/s]Loading weights:  93%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▊        | 272/291 [00:01<00:00, 163.95it/s]Loading weights:  99%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▏| 289/291 [00:01<00:00, 165.54it/s]Loading weights: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 291/291 [00:01<00:00, 165.42it/s]
+Token indices sequence length is longer than the specified maximum sequence length for this model (4684 > 2048). Running this sequence through the model will result in indexing errors
+loading calibration data
+dataset loading complete
+  layer 0 sparsity 0.500000
+  layer 1 sparsity 0.500000
+  layer 2 sparsity 0.500000
+  layer 3 sparsity 0.500000
+  layer 4 sparsity 0.500000
+  layer 5 sparsity 0.500000
+  layer 6 sparsity 0.500000
+  layer 7 sparsity 0.500000
+  layer 8 sparsity 0.500000
+  layer 9 sparsity 0.500000
+  layer 10 sparsity 0.500000
+  layer 11 sparsity 0.500000
+  layer 12 sparsity 0.500000
+  layer 13 sparsity 0.500000
+  layer 14 sparsity 0.500000
+  layer 15 sparsity 0.500000
+  layer 16 sparsity 0.500000
+  layer 17 sparsity 0.500000
+  layer 18 sparsity 0.500000
+  layer 19 sparsity 0.500000
+  layer 20 sparsity 0.500000
+  layer 21 sparsity 0.500000
+  layer 22 sparsity 0.500000
+  layer 23 sparsity 0.500000
+  layer 24 sparsity 0.500000
+  layer 25 sparsity 0.500000
+  layer 26 sparsity 0.500000
+  layer 27 sparsity 0.500000
+  layer 28 sparsity 0.500000
+  layer 29 sparsity 0.500000
+  layer 30 sparsity 0.500000
+  layer 31 sparsity 0.500000
+layer 0 sparsity 0.500000
+layer 1 sparsity 0.500000
+layer 2 sparsity 0.500000
+layer 3 sparsity 0.500000
+layer 4 sparsity 0.500000
+layer 5 sparsity 0.500000
+layer 6 sparsity 0.500000
+layer 7 sparsity 0.500000
+layer 8 sparsity 0.500000
+layer 9 sparsity 0.500000
+layer 10 sparsity 0.500000
+layer 11 sparsity 0.500000
+layer 12 sparsity 0.500000
+layer 13 sparsity 0.500000
+layer 14 sparsity 0.500000
+layer 15 sparsity 0.500000
+layer 16 sparsity 0.500000
+layer 17 sparsity 0.500000
+layer 18 sparsity 0.500000
+layer 19 sparsity 0.500000
+layer 20 sparsity 0.500000
+layer 21 sparsity 0.500000
+layer 22 sparsity 0.500000
+layer 23 sparsity 0.500000
+layer 24 sparsity 0.500000
+layer 25 sparsity 0.500000
+layer 26 sparsity 0.500000
+layer 27 sparsity 0.500000
+layer 28 sparsity 0.500000
+layer 29 sparsity 0.500000
+layer 30 sparsity 0.500000
+layer 31 sparsity 0.500000
+nsamples 166
+sample 0
+sample 50
+sample 100
+sample 150
+  Verified sparsity: 0.5000
+  Perplexity: 7.16
+
+── Sparsity: 70%, α=100.0 ──
+Loading weights:   0%|                                                                                                                                        | 0/291 [00:00<?, ?it/s]Loading weights:   2%|██▋                                                                                                                             | 6/291 [00:00<00:05, 54.78it/s]Loading weights:   8%|█████████▉                                                                                                                    | 23/291 [00:00<00:02, 119.58it/s]Loading weights:  14%|█████████████████▎                                                                                                            | 40/291 [00:00<00:01, 138.66it/s]Loading weights:  19%|███████████████████████▍                                                                                                      | 54/291 [00:00<00:01, 136.67it/s]Loading weights:  24%|██████████████████████████████▋                                                                                               | 71/291 [00:00<00:01, 148.07it/s]Loading weights:  30%|█████████████████████████████████████▋                                                                                        | 87/291 [00:00<00:01, 151.96it/s]Loading weights:  36%|████████████████████████████████████████████▋                                                                                | 104/291 [00:00<00:01, 153.55it/s]Loading weights:  42%|███████████████████████████████████████████████████▉                                                                         | 121/291 [00:00<00:01, 152.78it/s]Loading weights:  48%|████████████████████████████████████████████████████████████▌                                                                | 141/291 [00:00<00:00, 166.77it/s]Loading weights:  55%|████████████████████████████████████████████████████████████████████▎                                                        | 159/291 [00:01<00:00, 166.41it/s]Loading weights:  60%|███████████████████████████████████████████████████████████████████████████▌                                                 | 176/291 [00:01<00:00, 163.40it/s]Loading weights:  66%|██████████████████████████████████████████████████████████████████████████████████▉                                          | 193/291 [00:01<00:00, 161.16it/s]Loading weights:  72%|██████████████████████████████████████████████████████████████████████████████████████████▏                                  | 210/291 [00:01<00:00, 159.01it/s]Loading weights:  78%|█████████████████████████████████████████████████████████████████████████████████████████████████                            | 226/291 [00:01<00:00, 145.74it/s]Loading weights:  83%|███████████████████████████████████████████████████████████████████████████████████████████████████████▌                     | 241/291 [00:01<00:00, 141.65it/s]Loading weights:  88%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████▍              | 257/291 [00:01<00:00, 140.94it/s]Loading weights:  94%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▋       | 274/291 [00:01<00:00, 145.65it/s]Loading weights:  99%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▏| 289/291 [00:01<00:00, 143.76it/s]Loading weights: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 291/291 [00:01<00:00, 146.53it/s]
+loading calibration data
+dataset loading complete
+  layer 0 sparsity 0.699950
+  layer 1 sparsity 0.699950
+  layer 2 sparsity 0.699950
+  layer 3 sparsity 0.699950
+  layer 4 sparsity 0.699950
+  layer 5 sparsity 0.699950
+  layer 6 sparsity 0.699950
+  layer 7 sparsity 0.699950
+  layer 8 sparsity 0.699950
+  layer 9 sparsity 0.699950
+  layer 10 sparsity 0.699950
+  layer 11 sparsity 0.699950
+  layer 12 sparsity 0.699950
+  layer 13 sparsity 0.699950
+  layer 14 sparsity 0.699950
+  layer 15 sparsity 0.699950
+  layer 16 sparsity 0.699950
+  layer 17 sparsity 0.699950
+  layer 18 sparsity 0.699950
+  layer 19 sparsity 0.699950
+  layer 20 sparsity 0.699950
+  layer 21 sparsity 0.699950
+  layer 22 sparsity 0.699950
+  layer 23 sparsity 0.699950
+  layer 24 sparsity 0.699950
+  layer 25 sparsity 0.699950
+  layer 26 sparsity 0.699950
+  layer 27 sparsity 0.699950
+  layer 28 sparsity 0.699950
+  layer 29 sparsity 0.699950
+  layer 30 sparsity 0.699950
+  layer 31 sparsity 0.699950
+layer 0 sparsity 0.699950
+layer 1 sparsity 0.699950
+layer 2 sparsity 0.699950
+layer 3 sparsity 0.699950
+layer 4 sparsity 0.699950
+layer 5 sparsity 0.699950
+layer 6 sparsity 0.699950
+layer 7 sparsity 0.699950
+layer 8 sparsity 0.699950
+layer 9 sparsity 0.699950
+layer 10 sparsity 0.699950
+layer 11 sparsity 0.699950
+layer 12 sparsity 0.699950
+layer 13 sparsity 0.699950
+layer 14 sparsity 0.699950
+layer 15 sparsity 0.699950
+layer 16 sparsity 0.699950
+layer 17 sparsity 0.699950
+layer 18 sparsity 0.699950
+layer 19 sparsity 0.699950
+layer 20 sparsity 0.699950
+layer 21 sparsity 0.699950
+layer 22 sparsity 0.699950
+layer 23 sparsity 0.699950
+layer 24 sparsity 0.699950
+layer 25 sparsity 0.699950
+layer 26 sparsity 0.699950
+layer 27 sparsity 0.699950
+layer 28 sparsity 0.699950
+layer 29 sparsity 0.699950
+layer 30 sparsity 0.699950
+layer 31 sparsity 0.699950
+nsamples 166
+sample 0
+sample 50
+sample 100
+sample 150
+  Verified sparsity: 0.6999
+  Perplexity: 100.72
+
+==================================================
+  Exp 3: Wanda++ EAP-IG (α=100.0)
+==================================================
+  Sparsity            PPL
+  ------------------------
+  50%                7.16
+  70%              100.72
+
+── Sparsity: 50%, α=500.0 ──
+Loading weights:   0%|                                                                                                                                        | 0/291 [00:00<?, ?it/s]Loading weights:   3%|███▌                                                                                                                            | 8/291 [00:00<00:03, 78.28it/s]Loading weights:   8%|██████████▍                                                                                                                   | 24/291 [00:00<00:02, 120.26it/s]Loading weights:  15%|███████████████████▍                                                                                                          | 45/291 [00:00<00:01, 158.26it/s]Loading weights:  21%|██████████████████████████▍                                                                                                   | 61/291 [00:00<00:01, 154.04it/s]Loading weights:  28%|███████████████████████████████████▌                                                                                          | 82/291 [00:00<00:01, 171.23it/s]Loading weights:  34%|██████████████████████████████████████████▉                                                                                  | 100/291 [00:00<00:01, 173.81it/s]Loading weights:  41%|██████████████████████████████████████████████████▋                                                                          | 118/291 [00:00<00:00, 174.89it/s]Loading weights:  47%|██████████████████████████████████████████████████████████▍                                                                  | 136/291 [00:00<00:00, 172.06it/s]Loading weights:  53%|██████████████████████████████████████████████████████████████████▏                                                          | 154/291 [00:00<00:00, 170.07it/s]Loading weights:  60%|███████████████████████████████████████████████████████████████████████████▏                                                 | 175/291 [00:01<00:00, 178.62it/s]Loading weights:  67%|███████████████████████████████████████████████████████████████████████████████████▎                                         | 194/291 [00:01<00:00, 180.39it/s]Loading weights:  73%|███████████████████████████████████████████████████████████████████████████████████████████▍                                 | 213/291 [00:01<00:00, 182.31it/s]Loading weights:  80%|███████████████████████████████████████████████████████████████████████████████████████████████████▋                         | 232/291 [00:01<00:00, 179.85it/s]Loading weights:  86%|███████████████████████████████████████████████████████████████████████████████████████████████████████████▊                 | 251/291 [00:01<00:00, 167.87it/s]Loading weights:  92%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████          | 268/291 [00:01<00:00, 155.31it/s]Loading weights:  98%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▉   | 284/291 [00:01<00:00, 154.95it/s]Loading weights: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 291/291 [00:01<00:00, 150.51it/s]
+loading calibration data
+dataset loading complete
+  layer 0 sparsity 0.500000
+  layer 1 sparsity 0.500000
+  layer 2 sparsity 0.500000
+  layer 3 sparsity 0.500000
+  layer 4 sparsity 0.500000
+  layer 5 sparsity 0.500000
+  layer 6 sparsity 0.500000
+  layer 7 sparsity 0.500000
+  layer 8 sparsity 0.500000
+  layer 9 sparsity 0.500000
+  layer 10 sparsity 0.500000
+  layer 11 sparsity 0.500000
+  layer 12 sparsity 0.500000
+  layer 13 sparsity 0.500000
+  layer 14 sparsity 0.500000
+  layer 15 sparsity 0.500000
+  layer 16 sparsity 0.500000
+  layer 17 sparsity 0.500000
+  layer 18 sparsity 0.500000
+  layer 19 sparsity 0.500000
+  layer 20 sparsity 0.500000
+  layer 21 sparsity 0.500000
+  layer 22 sparsity 0.500000
+  layer 23 sparsity 0.500000
+  layer 24 sparsity 0.500000
+  layer 25 sparsity 0.500000
+  layer 26 sparsity 0.500000
+  layer 27 sparsity 0.500000
+  layer 28 sparsity 0.500000
+  layer 29 sparsity 0.500000
+  layer 30 sparsity 0.500000
+  layer 31 sparsity 0.500000
+layer 0 sparsity 0.500000
+layer 1 sparsity 0.500000
+layer 2 sparsity 0.500000
+layer 3 sparsity 0.500000
+layer 4 sparsity 0.500000
+layer 5 sparsity 0.500000
+layer 6 sparsity 0.500000
+layer 7 sparsity 0.500000
+layer 8 sparsity 0.500000
+layer 9 sparsity 0.500000
+layer 10 sparsity 0.500000
+layer 11 sparsity 0.500000
+layer 12 sparsity 0.500000
+layer 13 sparsity 0.500000
+layer 14 sparsity 0.500000
+layer 15 sparsity 0.500000
+layer 16 sparsity 0.500000
+layer 17 sparsity 0.500000
+layer 18 sparsity 0.500000
+layer 19 sparsity 0.500000
+layer 20 sparsity 0.500000
+layer 21 sparsity 0.500000
+layer 22 sparsity 0.500000
+layer 23 sparsity 0.500000
+layer 24 sparsity 0.500000
+layer 25 sparsity 0.500000
+layer 26 sparsity 0.500000
+layer 27 sparsity 0.500000
+layer 28 sparsity 0.500000
+layer 29 sparsity 0.500000
+layer 30 sparsity 0.500000
+layer 31 sparsity 0.500000
+nsamples 166
+sample 0
+sample 50
+sample 100
+sample 150
+  Verified sparsity: 0.5000
+  Perplexity: 7.19
+
+── Sparsity: 70%, α=500.0 ──
+Loading weights:   0%|                                                                                                                                        | 0/291 [00:00<?, ?it/s]Loading weights:   3%|███▉                                                                                                                            | 9/291 [00:00<00:03, 89.86it/s]Loading weights:   8%|██████████▍                                                                                                                   | 24/291 [00:00<00:02, 118.77it/s]Loading weights:  14%|██████████████████▏                                                                                                           | 42/291 [00:00<00:01, 139.47it/s]Loading weights:  20%|█████████████████████████                                                                                                     | 58/291 [00:00<00:01, 142.70it/s]Loading weights:  25%|███████████████████████████████▌                                                                                              | 73/291 [00:00<00:01, 144.00it/s]Loading weights:  31%|██████████████████████████████████████▌                                                                                       | 89/291 [00:00<00:01, 149.07it/s]Loading weights:  36%|████████████████████████████████████████████▋                                                                                | 104/291 [00:00<00:01, 146.28it/s]Loading weights:  42%|███████████████████████████████████████████████████▉                                                                         | 121/291 [00:00<00:01, 150.45it/s]Loading weights:  48%|███████████████████████████████████████████████████████████▋                                                                 | 139/291 [00:00<00:00, 154.31it/s]Loading weights:  54%|███████████████████████████████████████████████████████████████████▊                                                         | 158/291 [00:01<00:00, 160.80it/s]Loading weights:  60%|███████████████████████████████████████████████████████████████████████████▌                                                 | 176/291 [00:01<00:00, 165.61it/s]Loading weights:  67%|███████████████████████████████████████████████████████████████████████████████████▊                                         | 195/291 [00:01<00:00, 165.92it/s]Loading weights:  73%|███████████████████████████████████████████████████████████████████████████████████████████▍                                 | 213/291 [00:01<00:00, 167.06it/s]Loading weights:  79%|██████████████████████████████████████████████████████████████████████████████████████████████████▊                          | 230/291 [00:01<00:00, 164.80it/s]Loading weights:  85%|██████████████████████████████████████████████████████████████████████████████████████████████████████████▌                  | 248/291 [00:01<00:00, 164.76it/s]Loading weights:  91%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████▎          | 266/291 [00:01<00:00, 166.13it/s]Loading weights:  97%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▌   | 283/291 [00:01<00:00, 165.85it/s]Loading weights: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 291/291 [00:02<00:00, 140.69it/s]
+loading calibration data
+dataset loading complete
+  layer 0 sparsity 0.699950
+  layer 1 sparsity 0.699950
+  layer 2 sparsity 0.699950
+  layer 3 sparsity 0.699950
+  layer 4 sparsity 0.699950
+  layer 5 sparsity 0.699950
+  layer 6 sparsity 0.699950
+  layer 7 sparsity 0.699950
+  layer 8 sparsity 0.699950
+  layer 9 sparsity 0.699950
+  layer 10 sparsity 0.699950
+  layer 11 sparsity 0.699950
+  layer 12 sparsity 0.699950
+  layer 13 sparsity 0.699950
+  layer 14 sparsity 0.699950
+  layer 15 sparsity 0.699950
+  layer 16 sparsity 0.699950
+  layer 17 sparsity 0.699950
+  layer 18 sparsity 0.699950
+  layer 19 sparsity 0.699950
+  layer 20 sparsity 0.699950
+  layer 21 sparsity 0.699950
+  layer 22 sparsity 0.699950
+  layer 23 sparsity 0.699950
+  layer 24 sparsity 0.699950
+  layer 25 sparsity 0.699950
+  layer 26 sparsity 0.699950
+  layer 27 sparsity 0.699950
+  layer 28 sparsity 0.699950
+  layer 29 sparsity 0.699950
+  layer 30 sparsity 0.699950
+  layer 31 sparsity 0.699950
+layer 0 sparsity 0.699950
+layer 1 sparsity 0.699950
+layer 2 sparsity 0.699950
+layer 3 sparsity 0.699950
+layer 4 sparsity 0.699950
+layer 5 sparsity 0.699950
+layer 6 sparsity 0.699950
+layer 7 sparsity 0.699950
+layer 8 sparsity 0.699950
+layer 9 sparsity 0.699950
+layer 10 sparsity 0.699950
+layer 11 sparsity 0.699950
+layer 12 sparsity 0.699950
+layer 13 sparsity 0.699950
+layer 14 sparsity 0.699950
+layer 15 sparsity 0.699950
+layer 16 sparsity 0.699950
+layer 17 sparsity 0.699950
+layer 18 sparsity 0.699950
+layer 19 sparsity 0.699950
+layer 20 sparsity 0.699950
+layer 21 sparsity 0.699950
+layer 22 sparsity 0.699950
+layer 23 sparsity 0.699950
+layer 24 sparsity 0.699950
+layer 25 sparsity 0.699950
+layer 26 sparsity 0.699950
+layer 27 sparsity 0.699950
+layer 28 sparsity 0.699950
+layer 29 sparsity 0.699950
+layer 30 sparsity 0.699950
+layer 31 sparsity 0.699950
+nsamples 166
+sample 0
+sample 50
+sample 100
+sample 150
+  Verified sparsity: 0.6999
+  Perplexity: 111.00
+
+==================================================
+  Exp 3: Wanda++ EAP-IG (α=500.0)
+==================================================
+  Sparsity            PPL
+  ------------------------
+  50%                7.19
+  70%              111.00
+
+[3/3] Results saved to ./results/exp3_wandapp_eap.json
+
+Done!

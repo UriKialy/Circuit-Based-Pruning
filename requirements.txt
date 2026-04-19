@@ -16,3 +16,4 @@ typing-extensions
 sentencepiece
 rich>=12.6.0
 pandas>=1.1.5
+lm_eval -q

@@ -85,7 +85,7 @@ def prune_wanda_nonuniform(model, tokenizer, sparsity_map,
         layer = layers[i]
         subset = find_layers(layer)
 
-        if f"model.layers.{i}" in model.hf_device_map:
+        if hasattr(model, "hf_device_map") and f"model.layers.{i}" in model.hf_device_map:
             dev = model.hf_device_map[f"model.layers.{i}"]
             inps, outs, attention_mask, position_ids = (
                 inps.to(dev), outs.to(dev),
@@ -189,7 +189,7 @@ def prune_wandapp_eap(model, tokenizer, sparsity_map,
         layer = layers[i]
         subset = find_layers(layer)
 
-        if f"model.layers.{i}" in model.hf_device_map:
+        if hasattr(model, "hf_device_map") and f"model.layers.{i}" in model.hf_device_map:
             dev = model.hf_device_map[f"model.layers.{i}"]
             inps, outs, attention_mask, position_ids = (
                 inps.to(dev), outs.to(dev),
@@ -294,7 +294,7 @@ def prune_with_protection(model, tokenizer, sparsity_map,
         layer = layers[i]
         subset = find_layers(layer)
 
-        if f"model.layers.{i}" in model.hf_device_map:
+        if hasattr(model, "hf_device_map") and f"model.layers.{i}" in model.hf_device_map:
             dev = model.hf_device_map[f"model.layers.{i}"]
             inps, outs, attention_mask, position_ids = (
                 inps.to(dev), outs.to(dev),

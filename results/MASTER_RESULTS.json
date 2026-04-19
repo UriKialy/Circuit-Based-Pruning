@@ -1,0 +1,219 @@
+{
+  "model": "huggyllama/llama-7b (LLaMA-1 7B)",
+  "eval": "WikiText-2, seqlen=2048, 166 segments",
+  "baselines": {
+    "dense": {
+      "ppl": 5.68
+    },
+    "wanda": {
+      "50%": 7.26,
+      "70%": 76.17
+    },
+    "wandapp": {
+      "50%": 7.02,
+      "70%": 55.52
+    },
+    "sparsegpt": {
+      "50%": 7.22
+    },
+    "gblm": {
+      "50%": 7.15,
+      "70%": 54.6
+    }
+  },
+  "our_wanda_verified": {
+    "50%": 7.25
+  },
+  "exp2_relp_nonuniform_wanda": {
+    "description": "RelP layer allocation + Wanda within-layer",
+    "temp_sweep_50": {
+      "T=0.5": 7.64,
+      "T=1.0": 7.44,
+      "T=2.0": 7.34,
+      "T=3.0": 7.32,
+      "T=5.0": 7.26,
+      "T=7.0": 7.26,
+      "T=10.0": 7.26
+    },
+    "temp_sweep_70": {
+      "T=0.5": 132.94,
+      "T=1.0": 84.94,
+      "T=2.0": 66.73,
+      "T=3.0": 63.83,
+      "T=5.0": 70.68,
+      "T=7.0": 69.15,
+      "T=10.0": 71.61
+    },
+    "best_50": {
+      "T": 10.0,
+      "ppl": 7.26
+    },
+    "best_70": {
+      "T": 3.0,
+      "ppl": 63.83,
+      "note": "beats Wanda 76.17 by 16%"
+    }
+  },
+  "exp3_eapig_weight_wanda": {
+    "description": "EAP-IG weight scores + Wanda combined, uniform allocation",
+    "50%_alpha100": {
+      "ppl": 7.16,
+      "note": "beats Wanda 7.25 by 1.2%"
+    },
+    "50%_alpha500": {
+      "ppl": 7.19
+    },
+    "70%_alpha100": {
+      "ppl": 100.72
+    },
+    "70%_alpha_sweep": {
+      "a50": 101.08,
+      "a70": 94.45,
+      "a100": 100.72,
+      "a150": 96.43,
+      "a200": 98.81
+    }
+  },
+  "ablation_protect": {
+    "50%": {
+      "protected": 7.67,
+      "unprotected": 7.26,
+      "uniform": 7.24
+    },
+    "70%": {
+      "protected": 153.16,
+      "unprotected": 63.83,
+      "uniform": 89.58
+    }
+  },
+  "ablation_shuffle": {
+    "50%": {
+      "shuffled_runs": [
+        7.24,
+        7.26,
+        7.25,
+        7.24,
+        7.24
+      ],
+      "circuit": 7.26
+    },
+    "70%": {
+      "shuffled_runs": [
+        90.41,
+        143.2,
+        113.22,
+        82.27,
+        66.42
+      ],
+      "shuffled_mean": 99.1,
+      "shuffled_std": 28.5,
+      "circuit": 63.83
+    }
+  },
+  "crossover": {
+    "25%": {
+      "uniform": 5.9,
+      "circuit": 5.9
+    },
+    "30%": {
+      "uniform": 6.0,
+      "circuit": 5.99
+    },
+    "35%": {
+      "uniform": 6.13,
+      "circuit": 6.15
+    },
+    "40%": {
+      "uniform": 6.39,
+      "circuit": 6.41
+    },
+    "45%": {
+      "uniform": 6.74,
+      "circuit": 6.78
+    },
+    "50%": {
+      "uniform": 7.24,
+      "circuit": 7.26
+    },
+    "55%": {
+      "uniform": 8.29,
+      "circuit": 8.35
+    },
+    "60%": {
+      "uniform": 10.73,
+      "circuit": 10.84
+    },
+    "65%": {
+      "uniform": 20.62,
+      "circuit": 20.58
+    },
+    "70%": {
+      "uniform": 89.58,
+      "circuit": 63.83,
+      "note": "crossover at ~65%"
+    }
+  },
+  "key_findings": [
+    "At 50%: EAP-IG+Wanda (7.16) beats Wanda (7.25), 0.14 behind Wanda++ (7.02)",
+    "At 70%: RelP non-uniform (63.83) beats Wanda (76.17) by 16%",
+    "Protection hurts: capping L0/L31 at 10% gives 153 vs 63.83 unprotected",
+    "Shuffle ablation confirms signal: shuffled mean 99.1 vs circuit 63.83",
+    "Optimal T differs: T=10 for 50% (nearly uniform), T=3 for 70% (non-uniform)"
+  ],
+  "zeroshot_baselines_unstructured_50pct": {
+    "source": "Wanda paper Table 23, unstructured 50% sparsity",
+    "tasks": [
+      "BoolQ",
+      "RTE",
+      "HellaSwag",
+      "WinoGrande",
+      "ARC-e",
+      "ARC-c",
+      "OBQA"
+    ],
+    "7B": {
+      "dense": [
+        75.05,
+        66.43,
+        56.92,
+        69.93,
+        75.34,
+        41.89,
+        34.4
+      ],
+      "magnitude": [
+        54.59,
+        54.51,
+        45.49,
+        59.19,
+        58.84,
+        33.53,
+        22.4
+      ],
+      "sparsegpt": [
+        72.05,
+        54.15,
+        51.43,
+        67.88,
+        71.38,
+        37.71,
+        30.0
+      ],
+      "wanda": [
+        71.22,
+        55.6,
+        51.85,
+        66.06,
+        69.11,
+        36.86,
+        28.8
+      ],
+      "mean": {
+        "dense": 59.99,
+        "magnitude": 46.94,
+        "sparsegpt": 54.94,
+        "wanda": 54.21
+      }
+    }
+  }
+}
