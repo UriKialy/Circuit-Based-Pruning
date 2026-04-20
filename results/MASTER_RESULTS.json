@@ -242,5 +242,58 @@
     ],
     "mean_7task": 55.9,
     "note": "Beats Wanda mean 54.21 by +1.7 points on 7 overlapping tasks"
+  },
+  "scoring_comparison": {
+    "description": "4 methods compared: EAP-IG and RelP on pile10k and C4 (64 samples each)",
+    "within_method": {
+      "eapig_pile_vs_c4": {
+        "cosine": 0.98,
+        "spearman": 0.48,
+        "top20_overlap": 0.58
+      },
+      "relp_pile_vs_c4": {
+        "cosine": 0.99,
+        "spearman": 0.98,
+        "top20_overlap": 1.0
+      }
+    },
+    "cross_method": {
+      "eapig_vs_relp_pile": {
+        "cosine": 0.39
+      },
+      "eapig_vs_relp_c4": {
+        "cosine": 0.33
+      }
+    }
+  },
+  "weight_vs_node_comparison": {
+    "description": "EAP-IG weight-level vs RelP node-level on pile10k",
+    "spearman_total": 0.7,
+    "spearman_attn": 0.57,
+    "spearman_mlp": 0.65,
+    "top5_overlap": "3/5 (layers 2, 30, 31 shared)",
+    "top10_overlap": "6/10",
+    "matrix_importance_order": "v_proj > o_proj > q_proj > k_proj > up_proj > gate_proj > down_proj",
+    "key_disagreement": "RelP ranks L0/L1 as top-2, EAP-IG ranks them medium"
+  },
+  "all_ppl_summary": {
+    "50pct": {
+      "wanda_paper": 7.26,
+      "wanda_ours": 7.25,
+      "wandapp_paper": 7.02,
+      "eapig_a100_uniform": 7.16,
+      "eapig_a500_uniform": 7.19,
+      "relp_T3_nonuniform": 7.32,
+      "relp_T10_nonuniform": 7.26
+    },
+    "70pct": {
+      "wanda_paper": 76.17,
+      "wandapp_paper": 55.52,
+      "gblm_paper": 54.6,
+      "relp_T3_nonuniform": 63.83,
+      "relp_T2_nonuniform": 66.73,
+      "eapig_a70_uniform": 94.45,
+      "eapig_a100_uniform": 100.72
+    }
   }
 }

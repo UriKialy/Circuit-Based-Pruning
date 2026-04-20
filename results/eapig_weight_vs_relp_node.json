@@ -1,0 +1,21 @@
+{
+  "spearman_attn": 0.5689149560117301,
+  "spearman_mlp": 0.6473607038123167,
+  "spearman_total": 0.6994134897360703,
+  "top5_eapig": [
+    31,
+    2,
+    30,
+    29,
+    28
+  ],
+  "top5_relp": [
+    0,
+    1,
+    2,
+    31,
+    30
+  ],
+  "top5_overlap": 3,
+  "top10_overlap": 6
+}
