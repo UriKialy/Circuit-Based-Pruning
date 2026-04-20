@@ -313,5 +313,26 @@
       "relp_c4": 63.85
     },
     "finding": "RelP layer allocation beats Wanda by 16% at 70%. EAP-IG layer allocation hurts. C4 vs pile makes little difference within each method."
+  },
+  "data_efficiency": {
+    "description": "PPL impact of attribution sample count",
+    "eapig_weight_50pct": {
+      "baseline_wanda": 7.25,
+      "N8": 7.15,
+      "N16": 7.16,
+      "N32": 7.14,
+      "N64": 7.16,
+      "N128": 7.16,
+      "finding": "EAP-IG is extremely data-efficient: even 8 samples beats Wanda (7.15 vs 7.25). Score stabilizes immediately."
+    },
+    "relp_node_70pct_T3": {
+      "baseline_wanda": 76.17,
+      "N8": 77.02,
+      "N16": 64.49,
+      "N32": 67.79,
+      "N64": 64.88,
+      "N128": 64.88,
+      "finding": "RelP needs 16+ samples to beat Wanda. N=8 is worse than Wanda (77 vs 76). Stabilizes at N=16."
+    }
   }
 }
