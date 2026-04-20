@@ -295,5 +295,23 @@
       "eapig_a70_uniform": 94.45,
       "eapig_a100_uniform": 100.72
     }
+  },
+  "ppl_4_allocators": {
+    "description": "PPL using 4 different circuit methods as layer-budget allocators (T=3.0)",
+    "50pct": {
+      "wanda_uniform": 7.25,
+      "eapig_pile": 7.28,
+      "eapig_c4": 7.31,
+      "relp_pile": 7.32,
+      "relp_c4": 7.32
+    },
+    "70pct": {
+      "wanda_uniform": 76.17,
+      "eapig_pile": 116.08,
+      "eapig_c4": 103.66,
+      "relp_pile": 64.88,
+      "relp_c4": 63.85
+    },
+    "finding": "RelP layer allocation beats Wanda by 16% at 70%. EAP-IG layer allocation hurts. C4 vs pile makes little difference within each method."
   }
 }

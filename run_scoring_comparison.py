@@ -45,7 +45,7 @@ from data import load_texts
 def parse_args():
     p = argparse.ArgumentParser()
     p.add_argument("--only", type=str, default=None,
-                   choices=["score", "compare", "data_efficiency", "ppl_check"])
+                   choices=["score", "compare", "data_efficiency", "ppl_check", "weight_vs_node"])
     p.add_argument("--n_samples", type=int, default=128)
     p.add_argument("--scores_dir", type=str, default="./scores")
     p.add_argument("--results_dir", type=str, default="./results")
@@ -744,6 +744,162 @@ def _plot_ppl_efficiency(results, args):
 #  Main
 # ═══════════════════════════════════════════════════════════════
 
+
+# ═══════════════════════════════════════════════════════════════
+#  Phase 5: EAP-IG weight-level vs RelP node-level comparison
+# ═══════════════════════════════════════════════════════════════
+
+def compare_weight_vs_node(args):
+    """
+    Direction 1: Aggregate EAP-IG weight scores to node level, compare to RelP.
+    Direction 2: Top/bottom layer agreement between methods.
+    No model loading — pure math on cached scores.
+    """
+    from scipy.stats import spearmanr
+
+    print("\n" + "=" * 60)
+    print("  PHASE 5: EAP-IG weight-level vs RelP node-level")
+    print("=" * 60)
+
+    eap_path = os.path.join(args.scores_dir, "eap_ig_weights_pile10k_l2_s128.pkl")
+    relp_path = os.path.join(args.scores_dir, "relp_nodes_pile10k_s128.pkl")
+
+    if not os.path.exists(eap_path):
+        print(f"  ERROR: {eap_path} not found. Run experiment 1 first.")
+        return None
+    if not os.path.exists(relp_path):
+        print(f"  ERROR: {relp_path} not found. Run experiment 2 first.")
+        return None
+
+    eap_weights = load_scores(eap_path)
+    relp_data = load_scores(relp_path)
+    relp_sub = relp_data["sub_scores"]
+
+    attn_hooks = ["attn.hook_q", "attn.hook_k", "attn.hook_v", "attn.hook_z"]
+    mlp_hooks = ["mlp.hook_pre", "mlp.hook_pre_linear", "mlp.hook_post", "hook_mlp_out"]
+
+    eap_attn, eap_mlp = [], []
+    relp_attn, relp_mlp = [], []
+
+    print(f"\n  {'Layer':<6} {'EAP-IG attn':>14} {'EAP-IG mlp':>14} {'RelP attn':>12} {'RelP mlp':>12}")
+    print(f"  {'-'*60}")
+
+    for layer in range(N_LAYERS):
+        ea = sum(eap_weights[(layer, p)].abs().sum().item()
+                 for p in ["self_attn.q_proj", "self_attn.k_proj", "self_attn.v_proj", "self_attn.o_proj"]
+                 if (layer, p) in eap_weights)
+        em = sum(eap_weights[(layer, p)].abs().sum().item()
+                 for p in ["mlp.gate_proj", "mlp.up_proj", "mlp.down_proj"]
+                 if (layer, p) in eap_weights)
+        ra = sum(relp_sub.get((layer, h), 0) for h in attn_hooks)
+        rm = sum(relp_sub.get((layer, h), 0) for h in mlp_hooks)
+
+        eap_attn.append(ea)
+        eap_mlp.append(em)
+        relp_attn.append(ra)
+        relp_mlp.append(rm)
+
+        print(f"  {layer:<6} {ea:>14.2f} {em:>14.2f} {ra:>12.2f} {rm:>12.2f}")
+
+    # Correlations
+    c_attn, p_attn = spearmanr(eap_attn, relp_attn)
+    c_mlp, p_mlp = spearmanr(eap_mlp, relp_mlp)
+    eap_total = [a + m for a, m in zip(eap_attn, eap_mlp)]
+    relp_total = [a + m for a, m in zip(relp_attn, relp_mlp)]
+    c_total, p_total = spearmanr(eap_total, relp_total)
+
+    print(f"\n  Spearman correlations:")
+    print(f"    Attn:  rho={c_attn:.4f} (p={p_attn:.4f})")
+    print(f"    MLP:   rho={c_mlp:.4f} (p={p_mlp:.4f})")
+    print(f"    Total: rho={c_total:.4f} (p={p_total:.4f})")
+
+    # Top/bottom layers
+    eap_rank = np.argsort(eap_total)[::-1]
+    relp_rank = np.argsort(relp_total)[::-1]
+
+    print(f"\n  Top-5 layers by EAP-IG weight:  {list(eap_rank[:5])}")
+    print(f"  Top-5 layers by RelP node:      {list(relp_rank[:5])}")
+    print(f"  Bottom-5 by EAP-IG weight:      {list(eap_rank[-5:])}")
+    print(f"  Bottom-5 by RelP node:          {list(relp_rank[-5:])}")
+
+    overlap_top5 = len(set(eap_rank[:5]) & set(relp_rank[:5]))
+    overlap_top10 = len(set(eap_rank[:10]) & set(relp_rank[:10]))
+    print(f"  Top-5 overlap:  {overlap_top5}/5")
+    print(f"  Top-10 overlap: {overlap_top10}/10")
+
+    # Per-matrix comparison: which matrix type gets highest IG?
+    print(f"\n  Per-matrix-type average EAP-IG score:")
+    matrix_types = ["self_attn.q_proj", "self_attn.k_proj", "self_attn.v_proj",
+                    "self_attn.o_proj", "mlp.gate_proj", "mlp.up_proj", "mlp.down_proj"]
+    for mt in matrix_types:
+        scores = [eap_weights[(l, mt)].abs().mean().item() for l in range(N_LAYERS) if (l, mt) in eap_weights]
+        print(f"    {mt:<22} mean={np.mean(scores):.6f}")
+
+    # Plot
+    _plot_weight_vs_node(eap_total, relp_total, eap_attn, relp_attn, eap_mlp, relp_mlp, args)
+
+    result = {
+        "spearman_attn": float(c_attn), "spearman_mlp": float(c_mlp), "spearman_total": float(c_total),
+        "top5_eapig": list(map(int, eap_rank[:5])), "top5_relp": list(map(int, relp_rank[:5])),
+        "top5_overlap": overlap_top5, "top10_overlap": overlap_top10,
+    }
+    out_path = os.path.join(args.results_dir, "eapig_weight_vs_relp_node.json")
+    with open(out_path, "w") as f:
+        json.dump(result, f, indent=2)
+    print(f"\n  Saved to {out_path}")
+    return result
+
+
+def _plot_weight_vs_node(eap_total, relp_total, eap_attn, relp_attn, eap_mlp, relp_mlp, args):
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    os.makedirs(args.plots_dir, exist_ok=True)
+    fig, axes = plt.subplots(1, 3, figsize=(18, 5))
+
+    layers = range(N_LAYERS)
+
+    # Normalize for visual comparison
+    def norm(v):
+        v = np.array(v)
+        return v / (v.max() + 1e-12)
+
+    # Total importance
+    ax = axes[0]
+    ax.plot(layers, norm(eap_total), "o-", label="EAP-IG (weight agg.)", color="#e74c3c", linewidth=2, markersize=4)
+    ax.plot(layers, norm(relp_total), "s-", label="RelP (node)", color="#3498db", linewidth=2, markersize=4)
+    ax.set_xlabel("Layer")
+    ax.set_ylabel("Normalized Importance")
+    ax.set_title("Total Layer Importance")
+    ax.legend()
+    ax.grid(True, alpha=0.3)
+
+    # Attn only
+    ax = axes[1]
+    ax.plot(layers, norm(eap_attn), "o-", label="EAP-IG attn", color="#e74c3c", linewidth=2, markersize=4)
+    ax.plot(layers, norm(relp_attn), "s-", label="RelP attn", color="#3498db", linewidth=2, markersize=4)
+    ax.set_xlabel("Layer")
+    ax.set_title("Attention Importance")
+    ax.legend()
+    ax.grid(True, alpha=0.3)
+
+    # MLP only
+    ax = axes[2]
+    ax.plot(layers, norm(eap_mlp), "o-", label="EAP-IG mlp", color="#e74c3c", linewidth=2, markersize=4)
+    ax.plot(layers, norm(relp_mlp), "s-", label="RelP mlp", color="#3498db", linewidth=2, markersize=4)
+    ax.set_xlabel("Layer")
+    ax.set_title("MLP Importance")
+    ax.legend()
+    ax.grid(True, alpha=0.3)
+
+    plt.tight_layout()
+    path = os.path.join(args.plots_dir, "eapig_weight_vs_relp_node.png")
+    plt.savefig(path, dpi=150)
+    plt.close()
+    print(f"  Saved: {path}")
+
+
 if __name__ == "__main__":
     args = parse_args()
     os.makedirs(args.results_dir, exist_ok=True)
@@ -768,8 +924,13 @@ if __name__ == "__main__":
         res = ppl_check(args)
         all_results["ppl_check"] = res
 
+    if args.only is None or args.only == "weight_vs_node":
+        res = compare_weight_vs_node(args)
+        all_results["weight_vs_node"] = res
+
     out_path = os.path.join(args.results_dir, "scoring_comparison.json")
     with open(out_path, "w") as f:
         json.dump(all_results, f, indent=2, default=str)
     print(f"\nAll results saved to {out_path}")
     print("Done!")
+

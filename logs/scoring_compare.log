@@ -1,0 +1,49 @@
+
+============================================================
+  PHASE 2: Cross-dataset & cross-method comparison
+============================================================
+Loaded scores from ./scores/eapig_nodes_pile10k_s64.pkl
+Loaded scores from ./scores/eapig_nodes_c4_s64.pkl
+Loaded scores from ./scores/relp_nodes_pile10k_s64.pkl
+Loaded scores from ./scores/relp_nodes_c4_s64.pkl
+
+  Layer-level cosine similarity (32 scores):
+                                     EAP-IG pile10k         EAP-IG C4      RelP pile10k           RelP C4
+  EAP-IG pile10k                        1.0000            0.9801            0.3865            0.4134    
+  EAP-IG C4                             0.9801            1.0000            0.3035            0.3308    
+  RelP pile10k                          0.3865            0.3035            1.0000            0.9949    
+  RelP C4                               0.4134            0.3308            0.9949            1.0000    
+
+  EAP-IG node-level (pile vs C4): cosine=0.9822, spearman=0.4775, top-20% overlap=58.29%
+  RelP node-level (pile vs C4):   cosine=0.9944, spearman=0.9842, top-20% overlap=100.00%
+
+  EAP-IG pile10k top-20% nodes (211):
+    m31          layer=31 score=    0.3359
+    m15          layer=15 score=    0.0288
+    m13          layer=13 score=    0.0255
+    m0           layer= 0 score=   -0.0239
+    m5           layer= 5 score=    0.0221
+    m17          layer=17 score=    0.0216
+    m14          layer=14 score=    0.0196
+    m9           layer= 9 score=    0.0195
+    m10          layer=10 score=    0.0194
+    m8           layer= 8 score=    0.0189
+    ... and 201 more
+
+  EAP-IG C4 top-20% nodes (211):
+    m31          layer=31 score=    0.3740
+    m10          layer=10 score=    0.0206
+    m12          layer=12 score=    0.0196
+    m13          layer=13 score=    0.0194
+    m30          layer=30 score=   -0.0172
+    a31.h6       layer=31 score=    0.0161
+    a31.h22      layer=31 score=    0.0144
+    m16          layer=16 score=    0.0130
+    a31.h26      layer=31 score=   -0.0116
+    m11          layer=11 score=    0.0111
+    ... and 201 more
+  Saved: ./plots/cosine_heatmap.png
+  Saved: ./plots/layer_profiles.png
+
+All results saved to ./results/scoring_comparison.json
+Done!

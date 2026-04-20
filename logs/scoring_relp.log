@@ -1,0 +1,57 @@
+
+============================================================
+  PHASE 1: Computing all 4 score sets
+============================================================
+  EAP-IG pile10k: cached at ./scores/eapig_nodes_pile10k_s64.pkl
+  EAP-IG C4: cached at ./scores/eapig_nodes_c4_s64.pkl
+
+  Computing RelP node-level on pile10k (64 samples)...
+Loading weights:   0%|                                                                                                                                        | 0/291 [00:00<?, ?it/s]Loading weights: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 291/291 [00:00<00:00, 8474.99it/s]
+WARNING:root:llama-7b-hf tokenizer not loaded. Please load manually.
+Loaded pretrained model llama-7b-hf into HookedTransformer
+Pre-tokenizing 64 samples...
+RelP layers:   0%|                                                                                                                                             | 0/32 [00:00<?, ?it/s]RelP layers:   0%|                                                                                                                                             | 0/32 [00:01<?, ?it/s]
+Traceback (most recent call last):
+  File "/workspace/Circuit-Based-Pruning/run_scoring_comparison.py", line 755, in <module>
+    paths = compute_all_scores(args)
+            ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/Circuit-Based-Pruning/run_scoring_comparison.py", line 265, in compute_all_scores
+    sub_scores, layer_imp = run_relp_on_texts(
+                            ^^^^^^^^^^^^^^^^^^
+  File "/workspace/Circuit-Based-Pruning/run_scoring_comparison.py", line 101, in run_relp_on_texts
+    sub_scores = run_relp_nodes(tl_model, texts, num_samples=num_samples,
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/Circuit-Based-Pruning/attribution_nodes.py", line 194, in run_relp_nodes
+    value = ce_metric(tl_model(corrupt_tokens))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1762, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/transformer_lens/HookedTransformer.py", line 633, in forward
+    residual = block(
+               ^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1762, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/transformer_lens/components/transformer_block.py", line 204, in forward
+    mlp_out = self.apply_mlp(normalized_resid_mid)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/transformer_lens/components/transformer_block.py", line 228, in apply_mlp
+    mlp_out = self.mlp(normalized_resid)  # [batch, pos, d_model]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1762, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/transformer_lens/components/mlps/gated_mlp.py", line 69, in forward
+    F.linear(x, self.W_in.T.contiguous())  # [batch, pos, d_mlp]
+                ^^^^^^^^^^^^^^^^^^^^^^^^
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 172.00 MiB. GPU 0 has a total capacity of 79.25 GiB of which 136.94 MiB is free. Including non-PyTorch memory, this process has 79.11 GiB memory in use. Of the allocated memory 78.17 GiB is allocated by PyTorch, and 454.11 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
