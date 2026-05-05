@@ -131,7 +131,7 @@ Circuit-guided allocation behaves like an explicit per-layer normalizer derived 
 | Uniform        | 19.66     | **11.29** | 52.7%     | **60.1%** |
 | Circuit-Guided | **17.95** | 11.81     | **52.9%** | 58.8%     |
 
-**Honest negative result:** the pre-LoRA gap (+1.71 PPL, +0.2 acc) does not survive LoRA recovery — uniform actually edges ahead post fine-tuning. Circuit-guided pruning is most useful in the *no-fine-tuning* regime. For deployments with a fine-tuning budget, local Wanda + LoRA is hard to beat.
+**Recovery Dynamics:** Circuit-guided pruning dominates the no-fine-tuning regime (+1.71 PPL, +0.2 acc). However, standard LoRA recovery currently closes this gap, allowing uniform methods like Wanda to achieve parity. We suspect network-wide LoRA dilutes the preserved subgraphs, and are actively testing targeted Circuit Fine-Tuning to maintain our edge.
 
 ---
 
