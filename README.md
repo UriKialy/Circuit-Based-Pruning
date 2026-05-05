@@ -2,8 +2,6 @@
 
 **From Interpretability Scores to Sparsity Budgets in Large Language Models**
 
-[📄 Paper (PDF)](https://drive.google.com/file/d/10zPsSs9PzYx-rXLTB944eATeIs3sQkGi/view?usp=sharing)
-
 Circuit-Guided Pruning uses mechanistic interpretability — circuit attribution via **Relevance Patching (RelP)** and **EAP-IG** — to inform LLM pruning. Instead of pruning every layer equally, circuit-importance scores either (i) drive non-uniform per-layer sparsity budgets, with Wanda handling fine-grained weight selection inside each layer, or (ii) replace Wanda's `|W|·‖X‖` criterion entirely.
 
 We validate on two models: **LLaMA-3.2-3B** (primary, all ablations) and **LLaMA-1 7B** ( zero-shot baselines from the Wanda paper).
