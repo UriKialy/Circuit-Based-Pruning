@@ -187,7 +187,7 @@ Circuit-guided allocation behaves like an explicit per-layer normalizer derived 
 Tested on a single A100-80GB (LLaMA-1 7B) and an RTX PRO 6000 96GB (LLaMA-3.2-3B). Both fit comfortably at fp16; calibration peaks around 35–40 GB on 7B.
 
 ```bash
-git clone https://github.com/<you>/circuit-guided-pruning.git
+git clone https://github.com/UriKialy/circuit-guided-pruning.git
 cd circuit-guided-pruning
 bash setup.sh        # clones EAP-IG + Wanda, installs deps, downloads the model
 ```
