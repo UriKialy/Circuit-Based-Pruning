@@ -6,7 +6,7 @@
 
 Circuit-Guided Pruning uses mechanistic interpretability — circuit attribution via **Relevance Patching (RelP)** and **EAP-IG** — to inform LLM pruning. Instead of pruning every layer equally, circuit-importance scores either (i) drive non-uniform per-layer sparsity budgets, with Wanda handling fine-grained weight selection inside each layer, or (ii) replace Wanda's `|W|·‖X‖` criterion entirely.
 
-We validate on two models: **LLaMA-3.2-3B** (primary, all ablations) and **LLaMA-1 7B** (replication + zero-shot baselines from the Wanda paper).
+We validate on two models: **LLaMA-3.2-3B** (primary, all ablations) and **LLaMA-1 7B** ( zero-shot baselines from the Wanda paper).
 
 ---
 
@@ -30,7 +30,7 @@ We validate on two models: **LLaMA-3.2-3B** (primary, all ablations) and **LLaMA
 | 50%      | 52.7%           | **53.8%**             | **+1.1** |
 | 70%      | 36.0%           | **38.6%**             | **+2.6** |
 
-### LLaMA-1 7B — WikiText-2 perplexity (replication)
+### LLaMA-1 7B — WikiText-2 perplexity
 
 Evaluated identically to Wanda's setup (seqlen 2048, 166 segments).
 
@@ -220,7 +220,7 @@ pip install -r requirements.txt
 - Cell 56 — Experiment 7: Local vs Global vs Circuit Wanda
 - Cell 57 — Experiment 8: Protection × Granularity matrix
 
-**LLaMA-1 7B (replication + zero-shot).**
+**LLaMA-1 7B (zero-shot).**
 ```bash
 # 1. Pre-compute attribution scores once (cached to ./scores)
 python run.py --experiment 2 --step attribution_only --dataset pile10k    # RelP node scores
