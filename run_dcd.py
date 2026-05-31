@@ -414,6 +414,7 @@ def run_strategy_A(args, device, tokenizer, scores_dir, results_dir):
             sparsity_map=sp_map,
             eap_ig_scores=dcd_scores,   # DCD scores used here
             alpha=args.alpha,
+            dataset="pile10k",
             nsamples=args.n_cal_samples,
             seed=0,
             device=device,

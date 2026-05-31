@@ -11,9 +11,9 @@ import torch
 
 def eval_perplexity_wikitext2(model, tokenizer, device=torch.device("cuda:0")):
     """Exact Wanda PPL evaluation on WikiText-2."""
+    from data import get_wikitext2_testenc
     model.seqlen = getattr(model, 'seqlen', 2048)
-    _, testloader = get_loaders("wikitext2", seed=0,
-                                 seqlen=model.seqlen, tokenizer=tokenizer)
+    testenc = get_wikitext2_testenc(tokenizer)
     with torch.no_grad():
-        ppl = eval_ppl_wikitext(model, testloader, 1, device)
+        ppl = eval_ppl_wikitext(model, testenc, 1, device)
     return ppl

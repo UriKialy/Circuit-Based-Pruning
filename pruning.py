@@ -66,7 +66,7 @@ def prune_wanda_nonuniform(model, tokenizer, sparsity_map,
     model.seqlen = getattr(model, 'seqlen', 2048)
 
     print("loading calibration data")
-    dataloader, _ = get_loaders("c4", nsamples=nsamples, seed=seed,
+    dataloader, _ = get_loaders(dataset, nsamples=nsamples, seed=seed,
                                  seqlen=model.seqlen, tokenizer=tokenizer)
     print("dataset loading complete")
 
@@ -89,7 +89,7 @@ def prune_wanda_nonuniform(model, tokenizer, sparsity_map,
             dev = model.hf_device_map[f"model.layers.{i}"]
             inps, outs, attention_mask, position_ids = (
                 inps.to(dev), outs.to(dev),
-                attention_mask.to(dev), position_ids.to(dev))
+                attention_mask.to(dev) if attention_mask is not None else None, position_ids.to(dev) if position_ids is not None else None)
 
         wrapped_layers = {}
         for name in subset:
@@ -156,7 +156,7 @@ def prune_wanda_nonuniform(model, tokenizer, sparsity_map,
 
 def prune_wandapp_eap(model, tokenizer, sparsity_map,
                        eap_ig_scores, alpha=500.0,
-                       nsamples=128, seed=0,
+                       nsamples=128, seed=0, dataset="pile10k",
                        device=torch.device("cuda:0"),
                        verbose=True):
     """
@@ -166,11 +166,14 @@ def prune_wandapp_eap(model, tokenizer, sparsity_map,
     Uses Wanda's actual infrastructure for calibration + input stats.
     """
     use_cache = model.config.use_cache
+    if not hasattr(model, "hf_device_map"):
+        model.hf_device_map = {f"model.layers.{i}": next(model.model.layers[i].parameters()).device for i in range(len(model.model.layers))}
+        model.hf_device_map["model.embed_tokens"] = next(model.model.embed_tokens.parameters()).device
     model.config.use_cache = False
     model.seqlen = getattr(model, 'seqlen', 2048)
 
     print("loading calibration data")
-    dataloader, _ = get_loaders("c4", nsamples=nsamples, seed=seed,
+    dataloader, _ = get_loaders(dataset, nsamples=nsamples, seed=seed,
                                  seqlen=model.seqlen, tokenizer=tokenizer)
     print("dataset loading complete")
 
@@ -193,7 +196,7 @@ def prune_wandapp_eap(model, tokenizer, sparsity_map,
             dev = model.hf_device_map[f"model.layers.{i}"]
             inps, outs, attention_mask, position_ids = (
                 inps.to(dev), outs.to(dev),
-                attention_mask.to(dev), position_ids.to(dev))
+                attention_mask.to(dev) if attention_mask is not None else None, position_ids.to(dev) if position_ids is not None else None)
 
         wrapped_layers = {}
         for name in subset:
@@ -276,7 +279,7 @@ def prune_with_protection(model, tokenizer, sparsity_map,
     model.config.use_cache = False
     model.seqlen = getattr(model, 'seqlen', 2048)
 
-    dataloader, _ = get_loaders("c4", nsamples=nsamples, seed=seed,
+    dataloader, _ = get_loaders(dataset, nsamples=nsamples, seed=seed,
                                  seqlen=model.seqlen, tokenizer=tokenizer)
 
     with torch.no_grad():
@@ -298,7 +301,7 @@ def prune_with_protection(model, tokenizer, sparsity_map,
             dev = model.hf_device_map[f"model.layers.{i}"]
             inps, outs, attention_mask, position_ids = (
                 inps.to(dev), outs.to(dev),
-                attention_mask.to(dev), position_ids.to(dev))
+                attention_mask.to(dev) if attention_mask is not None else None, position_ids.to(dev) if position_ids is not None else None)
 
         wrapped_layers = {}
         for name in subset:
