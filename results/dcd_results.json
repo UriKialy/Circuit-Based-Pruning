@@ -1,0 +1,19 @@
+{
+  "model": "huggyllama/llama-7b",
+  "alpha": 500.0,
+  "temperature": 5.0,
+  "dataset": "pile10k",
+  "n_samples": 128,
+  "strategy_A_weight_criterion": {},
+  "strategy_B_layer_budget": {},
+  "reference_wanda": {
+    "0.3": null,
+    "0.5": 7.26,
+    "0.7": 76.17
+  },
+  "reference_wandapp": {
+    "0.3": null,
+    "0.5": 7.02,
+    "0.7": 55.52
+  }
+}

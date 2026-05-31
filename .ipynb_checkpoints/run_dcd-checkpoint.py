@@ -226,25 +226,18 @@ def dcd_layer_importance_score(block, clean_inps, attention_mask,
 #  Full-model scorers  (call the block-level stubs above across all layers)
 # ═══════════════════════════════════════════════════════════════════════════
 
-def dcd_weight_scores_all_blocks(model, dataloader, device, scores_path=None,
+def dcd_weight_scores_all_blocks(model, dataloader, device,
                                   nsamples_per_block=None):
     """
     Compute per-weight DCD scores for every decoder block.
 
-    STREAMING MODE (scores_path provided):
-      Scores each block, immediately torch.saves that block's tensors to
-      scores_path/block_{i}.pt, then frees the tensors. Peak CPU RAM =
-      one block worth of scores (~810 MB for LLaMA-7B) instead of 26 GB.
-      Returns None; caller must load via load_scores_streamed().
+    Mirrors the structure of eap_ig_all_blocks in attribution_weights.py:
+      1. Catch block-0 inputs
+      2. For each block: score → forward through unpruned block → next inputs
+      3. Return dict: (layer_idx, matrix_name) -> score tensor on CPU
 
-    LEGACY MODE (scores_path=None):
-      Returns full dict: (layer_idx, matrix_name) -> tensor on CPU.
-      Only use for small models that fit entirely in RAM.
+    No weights are modified.
     """
-    streaming = scores_path is not None
-    if streaming:
-        os.makedirs(scores_path, exist_ok=True)
-
     print("Preparing block-0 inputs for DCD weight scoring...")
     clean_inps, attention_mask, position_ids = prepare_block_inputs(
         model, dataloader, device)
@@ -253,8 +246,7 @@ def dcd_weight_scores_all_blocks(model, dataloader, device, scores_path=None,
         model, clean_inps, position_ids, device)
 
     layers = model.model.layers
-    all_scores = {} if not streaming else None
-    n_saved = 0
+    all_scores = {}
 
     for layer_idx in range(len(layers)):
         print(f"\n== DCD weight scoring: block {layer_idx}/{len(layers)-1} ==")
@@ -266,17 +258,8 @@ def dcd_weight_scores_all_blocks(model, dataloader, device, scores_path=None,
             nsamples_per_block=nsamples_per_block,
         )
 
-        if streaming:
-            # Write this block immediately and free the tensors
-            block_path = os.path.join(scores_path, f"block_{layer_idx:02d}.pt")
-            torch.save({name: tensor for name, tensor in scores.items()}, block_path)
-            del scores
-            gc.collect()
-            n_saved += 1
-            print(f"  saved → {block_path}")
-        else:
-            for name, tensor in scores.items():
-                all_scores[(layer_idx, name)] = tensor
+        for name, tensor in scores.items():
+            all_scores[(layer_idx, name)] = tensor
 
         # Forward clean inputs through unpruned block for next layer
         clean_inps = forward_block_unpruned(
@@ -285,22 +268,7 @@ def dcd_weight_scores_all_blocks(model, dataloader, device, scores_path=None,
         )
         torch.cuda.empty_cache()
 
-    if streaming:
-        print(f"\nDCD weight scoring complete: {n_saved} block files in {scores_path}")
-        return None
-    else:
-        print(f"\nDCD weight scoring complete: {len(all_scores)} matrices scored.")
-        return all_scores
-
-
-def load_scores_streamed(scores_path, n_layers):
-    """Load block-by-block score files back into a flat (layer_idx, name)->tensor dict."""
-    all_scores = {}
-    for layer_idx in range(n_layers):
-        block_path = os.path.join(scores_path, f"block_{layer_idx:02d}.pt")
-        block = torch.load(block_path, map_location="cpu", weights_only=True)
-        for name, tensor in block.items():
-            all_scores[(layer_idx, name)] = tensor
+    print(f"\nDCD weight scoring complete: {len(all_scores)} matrices scored.")
     return all_scores
 
 
@@ -360,28 +328,26 @@ def run_strategy_A(args, device, tokenizer, scores_dir, results_dir):
     print("  STRATEGY A: DCD weight scores as pruning criterion")
     print("=" * 70)
 
-    # scores_path is a DIRECTORY — one block_{i}.pt file per layer (streaming)
-    scores_path = os.path.join(scores_dir, f"dcd_weight_scores_{args.dataset}_s{args.n_samples}")
+    scores_path = os.path.join(scores_dir, f"dcd_weight_scores_{args.dataset}_s{args.n_samples}.pkl")
 
     # ── 1. Attribution ────────────────────────────────────────────────────
     if args.step != "prune_only":
-        print("\n[1/3] Computing DCD weight scores (streaming per-block)...")
+        print("\n[1/3] Computing DCD weight scores...")
         model = load_model(args.model)
         dataloader = get_calibration_loader(
             args.dataset, args.n_samples, seed=0,
             seqlen=model.seqlen, tokenizer=tokenizer)
 
-        # passes scores_path as directory → saves block_{i}.pt on the fly, never
-        # accumulates the full 26 GB dict in RAM
-        dcd_weight_scores_all_blocks(model, dataloader, device,
-                                     scores_path=scores_path,
-                                     nsamples_per_block=None)
-        del model
+        dcd_scores = dcd_weight_scores_all_blocks(model, dataloader, device)
+        save_scores(dcd_scores, scores_path)
+        print(f"DCD weight scores saved → {scores_path}")
+        del dcd_scores, model
         hard_free()
-        print(f"  GPU memory freed. Block files in {scores_path}/")
+        print(f"  GPU memory freed. Scores on disk at {scores_path}")
     else:
-        if not os.path.isdir(scores_path):
-            print(f"ERROR: scores dir not found at {scores_path}")
+        print(f"\n[1/3] Loading cached DCD weight scores from {scores_path}...")
+        if not os.path.exists(scores_path):
+            print(f"ERROR: scores not found at {scores_path}")
             print("Remove --step prune_only to compute them first.")
             return {}
 
@@ -389,10 +355,7 @@ def run_strategy_A(args, device, tokenizer, scores_dir, results_dir):
         print("Scores saved. Stopping (--step scores_only).")
         return {}
 
-    import glob
-    n_layers = len(glob.glob(os.path.join(scores_path, "block_*.pt")))
-    print(f"\nLoading {n_layers} block score files from {scores_path}/...")
-    dcd_scores = load_scores_streamed(scores_path, n_layers)
+    dcd_scores = load_scores(scores_path)
 
     # ── 2. Prune + eval at each sparsity ──────────────────────────────────
     results = {}
