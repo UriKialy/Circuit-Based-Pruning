@@ -4,8 +4,34 @@
   "temperature": 5.0,
   "dataset": "pile10k",
   "n_samples": 128,
-  "strategy_A_weight_criterion": {},
-  "strategy_B_layer_budget": {},
+  "strategy_A_weight_criterion": {
+    "30%": {
+      "actual_sparsity": 0.2998,
+      "ppl": 5.88
+    },
+    "50%": {
+      "actual_sparsity": 0.5,
+      "ppl": 7.32
+    },
+    "70%": {
+      "actual_sparsity": 0.6999,
+      "ppl": 100.8
+    }
+  },
+  "strategy_B_layer_budget": {
+    "30%": {
+      "actual_sparsity": 0.29988754351522023,
+      "ppl": 6.017800807952881
+    },
+    "50%": {
+      "actual_sparsity": 0.49988251523032706,
+      "ppl": 7.412741184234619
+    },
+    "70%": {
+      "actual_sparsity": 0.6998978056438229,
+      "ppl": 254.16397094726562
+    }
+  },
   "reference_wanda": {
     "0.3": null,
     "0.5": 7.26,

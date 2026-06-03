@@ -50,7 +50,7 @@ def run_wanda_uniform(model, tokenizer, sparsity_ratio, nsamples=128, device=tor
 # ═══════════════════════════════════════════════════════════════
 
 def prune_wanda_nonuniform(model, tokenizer, sparsity_map,
-                            nsamples=128, seed=0,
+                            nsamples=128, seed=0, dataset="pile10k",
                             device=torch.device("cuda:0"),
                             use_ro=False, ro_fn=None,
                             verbose=True):
@@ -64,6 +64,9 @@ def prune_wanda_nonuniform(model, tokenizer, sparsity_map,
     use_cache = model.config.use_cache
     model.config.use_cache = False
     model.seqlen = getattr(model, 'seqlen', 2048)
+    if not hasattr(model, "hf_device_map"):
+        model.hf_device_map = {f"model.layers.{i}": next(model.model.layers[i].parameters()).device for i in range(len(model.model.layers))}
+        model.hf_device_map["model.embed_tokens"] = next(model.model.embed_tokens.parameters()).device
 
     print("loading calibration data")
     dataloader, _ = get_loaders(dataset, nsamples=nsamples, seed=seed,
